@@ -26,37 +26,22 @@ elseif(isset($_POST['user_username'])){
               echo "<script> window.location='index.php'</script>";
             }
             else{
-                      $sql="SELECT * FROM member
-                      WHERE mem_username='".$user_username."' 
-                      AND mem_password='".$user_password."' ";
+                      $sql="SELECT * FROM employee
+                      INNER JOIN role on role.roleID = employee.emp_roleID
+                      INNER JOIN department on department.depID = employee.emp_depID
+                      INNER JOIN status on status.staID = employee.emp_stalD
+                      WHERE empUserName='".$user_username."' 
+                      AND empPassword='".$user_password."'";
                       $result = mysqli_query($condb,$sql);
                     
                       if(mysqli_num_rows($result)==1){
                           $row = mysqli_fetch_array($result);
-                          if($row["mem_status"]=="0" or $row["mem_status"]=="2" ){
-                            $_SESSION['errorStatus']="errorStatus";
-                            Header("Location: index.php");
-                          }else{
-                            $_SESSION["mem_id"] = $row["mem_id"];
-                            $_SESSION["mem_name"] = $row["mem_name"];
-                            $_SESSION["mem_lev"] = $row["mem_level"];
-                            $_SESSION["mem_img"] = $row["mem_img"];
-                            
-                            // print_r($_SESSION);
-                            // var_dump($_SESSION);
-                            // exit();
-                            if($_SESSION["mem_lev"]=="0"){ 
-                              // echo "Are Your Admin";
-                              // exit();
-                              Header("Location: site/");
-
-                            }
-                            elseif($_SESSION["mem_lev"]=="1"){  
-
-                              Header("Location: site/");
-                            }
-                          }
-                          
+                            $_SESSION["userEmpID"] = $row["empID"];
+                            $_SESSION["userEmpFname"] = $row["empFname"];
+                            $_SESSION["userEmpLname"] = $row["empLname"];
+                            $_SESSION["userRoleName"] = $row["roleName"];
+                            $_SESSION["userRoleaccess"] = $row["roleaccess"];
+                              Header("Location: site/");           
                       }else{
                         $_SESSION['error']="error";
                         echo "<script> window.location='index.php'</script>";

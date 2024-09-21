@@ -2,17 +2,6 @@
 $active = "all";
 include("header.php");
 session_start();
-$mem_id = $_SESSION['mem_id'];
-// $bit = $_SESSION['bit']=1;
-
-$query_thesis = "SELECT t.*, m.mem_name
-FROM 
-    thesis t
-JOIN 
-    member m ON t.mem_id = m.mem_id
-WHERE 
-    t.thesis_status != 3 and t.thesis_status != 0 ;" ;
-$rs_thesis = mysqli_query($condb, $query_thesis);
 
 ?>
 

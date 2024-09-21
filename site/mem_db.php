@@ -11,7 +11,7 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 
     $mem_sid = mysqli_real_escape_string($condb, $_POST["mem_sid"]);
     $mem_cid = mysqli_real_escape_string($condb, $_POST["mem_cid"]);
-    $mem_name = mysqli_real_escape_string($condb, $_POST["mem_name"]);
+    $userEmpFname = mysqli_real_escape_string($condb, $_POST["userEmpFname"]);
     $mem_dep_id = mysqli_real_escape_string($condb, $_POST["dep_id"]);
     $mem_password = mysqli_real_escape_string($condb, sha1($_POST["mem_cid"]));
     $mem_username = mysqli_real_escape_string($condb, $_POST["mem_sid"]);
@@ -20,7 +20,7 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
     (
         mem_sid,
         mem_cid,
-        mem_name,
+        userEmpFname,
         mem_dep_id,
         mem_password,
         mem_username
@@ -29,7 +29,7 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
     (
         '$mem_sid',
         '$mem_cid',
-        '$mem_name',
+        '$userEmpFname',
         '$mem_dep_id',
         '$mem_password',
         '$mem_username'
@@ -51,10 +51,10 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 
 } elseif (isset($_POST['member']) && $_POST['member']=="edit") {
 
-    $mem_id = mysqli_real_escape_string($condb, $_POST["mem_id"]);
+    $userEmpID = mysqli_real_escape_string($condb, $_POST["userEmpID"]);
     $mem_sid = mysqli_real_escape_string($condb, $_POST["mem_sid"]);
     $mem_cid = mysqli_real_escape_string($condb, $_POST["mem_cid"]);
-    $mem_name = mysqli_real_escape_string($condb, $_POST["mem_name"]);
+    $userEmpFname = mysqli_real_escape_string($condb, $_POST["userEmpFname"]);
     $mem_dep_id = mysqli_real_escape_string($condb, $_POST["dep_id"]);
     $mem_username = mysqli_real_escape_string($condb, $_POST["mem_sid"]);
 
@@ -62,10 +62,10 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
     $sql = "UPDATE member SET 
     mem_sid = '$mem_sid',
     mem_cid = '$mem_cid',
-    mem_name = '$mem_name',
+    userEmpFname = '$userEmpFname',
     mem_dep_id = '$mem_dep_id',
     mem_username = '$mem_username'
-    WHERE mem_id='$mem_id'" ;
+    WHERE userEmpID='$userEmpID'" ;
 
     $result = mysqli_query($condb, $sql) or die ("Error in query: $sql " . mysqli_error($condb). "<br>$sql");
 	
@@ -81,8 +81,8 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 
 }elseif (isset($_GET['member']) && $_GET['member']=="del"){ 
 
-	$mem_id  = mysqli_real_escape_string($condb,$_GET["mem_id"]);
-	$sql ="UPDATE member SET mem_status = '2' WHERE mem_id= $mem_id";
+	$userEmpID  = mysqli_real_escape_string($condb,$_GET["userEmpID"]);
+	$sql ="UPDATE member SET mem_status = '2' WHERE userEmpID= $userEmpID";
 	$result = mysqli_query($condb, $sql) or die ("Error in query: $sql " . mysqli_error($condb). "<br>$sql");
 	
 	if($result){
@@ -93,9 +93,9 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 
 }elseif (isset($_GET['member']) && $_GET['member']=="status"){ 
 
-	$mem_id  = mysqli_real_escape_string($condb,$_GET["mem_id"]);
+	$userEmpID  = mysqli_real_escape_string($condb,$_GET["userEmpID"]);
     $mem_status  = mysqli_real_escape_string($condb,$_GET["mem_status"]);
-	$sql ="UPDATE member SET mem_status = $mem_status WHERE member.mem_id= $mem_id";
+	$sql ="UPDATE member SET mem_status = $mem_status WHERE member.userEmpID= $userEmpID";
 	$result = mysqli_query($condb, $sql) or die ("Error in query: $sql " . mysqli_error($condb). "<br>$sql");
 	
 	if($result){
@@ -106,8 +106,8 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 
 } elseif (isset($_POST['member']) && $_POST['member']=="rePass") {
 
-    $mem_id = mysqli_real_escape_string($condb, $_POST["mem_id"]);
-    $query_mem = "SELECT * FROM member WHERE mem_id = $mem_id;";
+    $userEmpID = mysqli_real_escape_string($condb, $_POST["userEmpID"]);
+    $query_mem = "SELECT * FROM member WHERE userEmpID = $userEmpID;";
 
     $rs_mem = mysqli_query($condb, $query_mem);
     $row=mysqli_fetch_array($rs_mem);
@@ -115,7 +115,7 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 
     $sql = "UPDATE member SET 
     mem_password = '$mem_password'
-    WHERE mem_id='$mem_id'" ;
+    WHERE userEmpID='$userEmpID'" ;
 
     $result = mysqli_query($condb, $sql) or die ("Error in query: $sql " . mysqli_error($condb). "<br>$sql");
 	
@@ -128,12 +128,12 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
     
 } elseif (isset($_POST['member']) && $_POST['member']=="editPass") {
 
-    $mem_id = mysqli_real_escape_string($condb, $_POST["mem_id"]);
+    $userEmpID = mysqli_real_escape_string($condb, $_POST["userEmpID"]);
     $old_password_input = sha1(mysqli_real_escape_string($condb, $_POST["mem_pass"]));
     $new_password = sha1(mysqli_real_escape_string($condb, $_POST["mem_newpass"]));
     $confirm_new_password = sha1(mysqli_real_escape_string($condb, $_POST["mem_newpass2"]));
 
-    $query_mem = "SELECT * FROM member WHERE mem_id = $mem_id;";
+    $query_mem = "SELECT * FROM member WHERE userEmpID = $userEmpID;";
     $rs_mem = mysqli_query($condb, $query_mem);
     $row = mysqli_fetch_array($rs_mem);
     $current_password = $row['mem_password'];
@@ -151,7 +151,7 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 
     $sql = "UPDATE member SET 
     mem_password = '$new_password'
-    WHERE mem_id = '$mem_id'";
+    WHERE userEmpID = '$userEmpID'";
 
     $result = mysqli_query($condb, $sql) or die("Error in query: $sql " . mysqli_error($condb) . "<br>$sql");
 

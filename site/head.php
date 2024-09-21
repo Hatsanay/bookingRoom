@@ -60,8 +60,8 @@
 
  
 //print_r($_SESSION);
-$mem_id = $_SESSION['mem_id'];
-if($mem_id==''){
+$userEmpID = $_SESSION['userEmpID'];
+if($userEmpID==''){
    Header("Location: ../index.php");
 }
 

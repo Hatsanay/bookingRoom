@@ -1,6 +1,8 @@
 <?php
 session_start();
-$permistion = $_SESSION['permistion']="1111111";
+// $permistion = $_SESSION['permistion']="1111111";
+$permistion = $_SESSION['userRoleaccess'];
+
 ?>
 <!-- bit 1 index.php -->
 <!-- bit 2 reserve.php -->
@@ -24,11 +26,11 @@ $permistion = $_SESSION['permistion']="1111111";
     <div class="sidebar"> 
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
-           <img src="../assets/img/member/<?php echo $_SESSION['mem_img'];?>" class="img-circle elevation-2" alt="User Image">
+           <img src="../assets/img/member/mem.png" class="img-circle elevation-2" alt="User Image">
           
         </div>
         <div class="info">
-        <a href="profile.php" target="" class="d-block"> <?php echo $_SESSION['mem_name'];?> | Profile</a>
+        <a href="profile.php" target="" class="d-block"> <?php echo $_SESSION['userEmpFname']," "; echo $_SESSION['userEmpLname'];?> | Profile</a>
         </div>
       </div>
 

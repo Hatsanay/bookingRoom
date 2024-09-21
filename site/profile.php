@@ -1,27 +1,27 @@
 <?php 
 $active = "";
 include("header.php");
-$mem_id = $_SESSION['mem_id'];
-$query_mem = "SELECT 
-    member.mem_id,
-    member.mem_sid,
-    member.mem_cid,
-    member.mem_name,
-    departments.dep_name,
-    faculties.fac_name,
-    member.mem_username,
-    member.mem_status,
-    member.mem_level,
-    member.mem_img
-FROM 
-    member
-JOIN 
-    departments ON member.mem_dep_id = departments.dep_id
-JOIN 
-    faculties ON departments.dep_fac_id = faculties.fac_id
-Where  member.mem_id = $mem_id " ;
-$rs_mem = mysqli_query($condb, $query_mem);
-$row=mysqli_fetch_array($rs_mem);
+$userEmpID = $_SESSION['userEmpID'];
+// $query_mem = "SELECT 
+//     member.userEmpID,
+//     member.mem_sid,
+//     member.mem_cid,
+//     member.userEmpFname,
+//     departments.dep_name,
+//     faculties.fac_name,
+//     member.mem_username,
+//     member.mem_status,
+//     member.mem_level,
+//     member.mem_img
+// FROM 
+//     member
+// JOIN 
+//     departments ON member.mem_dep_id = departments.dep_id
+// JOIN 
+//     faculties ON departments.dep_fac_id = faculties.fac_id
+// Where  member.userEmpID = $userEmpID " ;
+// $rs_mem = mysqli_query($condb, $query_mem);
+// $row=mysqli_fetch_array($rs_mem);
 ?>
 
 
@@ -69,7 +69,7 @@ $row=mysqli_fetch_array($rs_mem);
                         <div class="card-body">
                             <div class="form-group">
                                 <label>ชื่อ-สกุล</label>
-                                <input type="text" class="form-control" id="" placeholder="ชื่อ-สกุล" value="<?php echo $row['mem_name']; ?>" disabled>
+                                <input type="text" class="form-control" id="" placeholder="ชื่อ-สกุล" value="<?php echo $row['userEmpFname']; ?>" disabled>
                             </div>
 
                             <div class="form-group">
@@ -125,7 +125,7 @@ $row=mysqli_fetch_array($rs_mem);
       <form action="mem_db.php" method="POST" enctype="multipart/form-data">
 
         <input type="hidden" name="member" value="editPass">
-        <input type="hidden" name="mem_id" value="<?php echo $row['mem_id'];?>">
+        <input type="hidden" name="userEmpID" value="<?php echo $row['userEmpID'];?>">
         <div class="modal-content">
             <div class="modal-header bg-primary">
               <h5 class="modal-title" id="exampleModalLabel">เปลี่ยนรหัสผ่าน </h5>
