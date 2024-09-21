@@ -1,10 +1,12 @@
 <?php 
-$active = "all";
+$active = "room";
 include("header.php");
 session_start();
 $mem_id = $_SESSION['mem_id'];
-// $bit = $_SESSION['bit']=1;
-
+// if(!substr($permistion,0,1)=="1"){
+//   session_destroy();
+//   Header("Location: ../index.php");
+// }
 $query_thesis = "SELECT t.*, m.mem_name
 FROM 
     thesis t
@@ -22,7 +24,7 @@ $rs_thesis = mysqli_query($condb, $query_thesis);
 
   <div class="card card-primary">
       <div class="card-header ">
-        <h3 class="card-title">จองห้องประชุม</h3>
+        <h3 class="card-title">จัดการห้องประชุม</h3>
       </div>  
       
       <div class="card-body">
@@ -36,13 +38,9 @@ $rs_thesis = mysqli_query($condb, $query_thesis);
 
             </div>
             </div>
-
           </div>
-
         </div>
-
       </div>
-
   </div>
     
     
@@ -51,7 +49,6 @@ $rs_thesis = mysqli_query($condb, $query_thesis);
     
   </section>
   <!-- /.content -->
-
 
   
   
@@ -71,7 +68,3 @@ $rs_thesis = mysqli_query($condb, $query_thesis);
   </script>
 
 
-
-  
-</body>
-</html>

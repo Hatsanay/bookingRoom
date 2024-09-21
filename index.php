@@ -7,7 +7,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>ระบบรวบรวมวิจัย</title>
+  <title>ระบบจองห้องประชุม</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="" href="assets/img/logo/Logo-mut.png " />
@@ -51,7 +51,7 @@ body  {
   <div class="card">
     <div class="card-body login-card-body">
       <center><img width="250 px" src="assets/img/logo/mutlogo.png"><br><br>
-    <h3>เข้าสู่ระบบ</h3><h4>ระบบรวบรวมวิจัย</h4></center><br>
+    <h3>เข้าสู่ระบบ</h3><h4>ระบบจองห้องประชุม</h4></center><br>
     
 
       <form action="chk_login.php" method="post">

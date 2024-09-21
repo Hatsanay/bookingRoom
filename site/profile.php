@@ -1,5 +1,5 @@
 <?php 
-$menu = "";
+$active = "";
 include("header.php");
 $mem_id = $_SESSION['mem_id'];
 $query_mem = "SELECT 

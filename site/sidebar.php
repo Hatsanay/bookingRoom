@@ -1,18 +1,27 @@
+<?php
+session_start();
+$permistion = $_SESSION['permistion']="1111111";
+?>
+<!-- bit 1 index.php -->
+<!-- bit 2 reserve.php -->
+<!-- bit 3 approve.php -->
+<!-- bit 4 lockEmp.php -->
+
+
+
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-light-primary elevation-4">
     <!-- Brand Logo -->
-
     <a href="" class="brand-link bg-primary">
       <img src="../assets/img/logo/Logo-mut.png"
            alt="Logo"
            class="brand-image"
           >
-      <span class="brand-text font-weight-light">ระบบรวบรวมวิจัย</span>
+      <span class="brand-text font-weight-light">ระบบจองห้องประชุม</span>
     </a>
 
     <!-- Sidebar -->
     <div class="sidebar"> 
-      <!-- Sidebar user (optional) -->
       <div class="user-panel mt-3 pb-3 mb-3 d-flex">
         <div class="image">
            <img src="../assets/img/member/<?php echo $_SESSION['mem_img'];?>" class="img-circle elevation-2" alt="User Image">
@@ -23,96 +32,90 @@
         </div>
       </div>
 
-
-
         <!-- Sidebar Menu -->
       <nav class="mt-2">
-        <!-- nav-compact -->
+        <?php if(substr($permistion,0,1) == "1"){?> <!-- bitที่1 index.php -->
+        <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
+         
+          <li class="nav-header">สรุป</li>
+        
+         <li class="nav-item">
+            <a href="index.php" class="nav-link <?php if($active=="all"){echo "active";} ?> ">
+            <i class="nav-icon fas fa-book"></i>
+              <p>รายการที่จอง</p>
+            </a>
+          </li>
+
+
+        </ul>
+        <?php }?>
+
+        <?php if(substr($permistion,1,1)== "1"||substr($permistion,2,1)== "1"){?> <!-- bitที่2 และ 3 -->
         <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
          
           <li class="nav-header">เมนู</li>
-        
+
+          <?php if(substr($permistion,1,1)== "1"){?> <!-- bitที่2 -->
          <li class="nav-item">
-            <a href="index.php" class="nav-link <?php if($menu=="all"){echo "active";} ?> ">
+            <a href="reserve.php" class="nav-link <?php if($active=="reserve"){echo "active";} ?> ">
             <i class="nav-icon fas fa-book"></i>
-              <p>งานวิจัยทั้งหมด</p>
+              <p>จองห้องประชุม</p>
             </a>
           </li>
-
-
+          <?php }?>
+          <?php if(substr($permistion,2,1)== "1"){?> <!-- bitที่3 -->
           <li class="nav-item">
-            <a href="user_list_thesis.php" class="nav-link <?php if($menu=="thesis"){echo "active";} ?> ">
-            <i class="nav-icon fas fa-book"></i>
-              <p>งานวิจัยของฉัน </p>
+            <a href="approve.php" class="nav-link <?php if($active=="approve"){echo "active";} ?> ">
+            <i class="nav-icon fas fa-solid fa-stamp"></i>
+              <p>อนุมัติการจอง</p>
             </a>
           </li>
-
-
-
+          <?php }?>
+          <?php if(substr($permistion,3,1)== "1"){?> <!-- bitที่4 -->
+          <li class="nav-item">
+            <a href="lockEmp.php" class="nav-link <?php if($active=="lockEmp"){echo "active";} ?> ">
+            <i class="nav-icon fas fa-user-lock"></i>
+              <p>ล็อกพนักงาน</p>
+            </a>
+          </li>
+        <?php }?>
         </ul>
-        <hr>
+        <?php }?>
 
-        <?php
-        if ($_SESSION['mem_lev'] != 1) {
-        ?>
-
-        <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
-         
-         <li class="nav-header">จัดการงานวิจัย</li>
-       
-        <li class="nav-item">
-           <a href="manage_thesis.php" class="nav-link <?php if($menu=="manageThesis"){echo "active";} ?> ">
-           <i class="nav-icon fas fa-book"></i>
-             <p>จัดการงานวิจัย</p>
-           </a>
-         </li>
-
-
-         <li class="nav-item">
-           <a href="allow_thesis.php" class="nav-link <?php if($menu=="allowThesis"){echo "active";} ?> ">
-           <i class="nav-icon fas fa-book"></i>
-             <p>รอการอนุมัติ/รอการแก้ไข</p>
-           </a>
-         </li>
-
-
-
-       </ul>
        <hr>
-
+        
+       <?php if(substr($permistion,4,1)== "1"){?> <!-- bitที่ 5 6 7 -->
         <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
    
           <li class="nav-header">การตั้งค่าข้อมูลระบบ</li>
-
+          <?php if(substr($permistion,4,1)== "1"){?> <!-- bitที่5 -->
           <li class="nav-item">
-            <a href="list_mem.php" class="nav-link <?php if($menu=="member"){echo "active";} ?> ">
+            <a href="employee.php" class="nav-link <?php if($active=="employee"){echo "active";} ?> ">
               <i class="nav-icon fa fa-users"></i>
-              <p>สมาชิก</p>
+              <p>พนักงาน</p>
             </a>
           </li>
-
+        <?php }?>
+        <?php if(substr($permistion,5,1)== "1"){?> <!-- bitที่6 -->
           <li class="nav-item">
-            <a href="list_faculties.php" class="nav-link <?php if($menu=="fac"){echo "active";} ?> ">
+            <a href="role.php" class="nav-link <?php if($active=="role"){echo "active";} ?> ">
               <i class="nav-icon fas fa-university"></i>
-              <p>คณะ</p>
+              <p>ตำแหน่งและสิทธิ์</p>
             </a>
           </li>
-
+          <?php }?>
+        <?php if(substr($permistion,6,1)== "1"){?> <!-- bitที่6 -->
           <li class="nav-item">
-            <a href="list_departments.php" class="nav-link <?php if($menu=="dep"){echo "active";} ?> ">
+            <a href="room.php" class="nav-link <?php if($active=="room"){echo "active";} ?> ">
               <i class="nav-icon fas fa-clipboard-list"></i>
-              <p>สาขา</p>
+              <p>ห้องประชุม</p>
             </a>
           </li>
-
+          <?php }?>
 
         </ul>
-        <?php } ?>
         <hr>
-
-
-        
-       
+        <?php }?>
 
 <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
 

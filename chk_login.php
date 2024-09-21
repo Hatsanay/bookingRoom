@@ -24,9 +24,8 @@ elseif(isset($_POST['user_username'])){
           if($chk==''){
             $_SESSION['error']="error";
               echo "<script> window.location='index.php'</script>";
-            }//close if chk trim
+            }
             else{
-            //query 
                       $sql="SELECT * FROM member
                       WHERE mem_username='".$user_username."' 
                       AND mem_password='".$user_password."' ";
