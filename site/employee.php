@@ -8,12 +8,11 @@ if (substr($permistion, 4, 1) != "1") {
     header("Location: ../logout.php");
     exit();
 }
-
-$query_mem = "SELECT
+//ข้อมูลพนักงาน
+$query_emp = "SELECT
     empID,
     CONCAT(empFname, ' ', empLname) AS fullname,
     empGender,
-    TIMESTAMPDIFF(YEAR, empBdate, CURDATE()) AS age,
     empPhone,
     role.roleName AS emprole,
     department.depName AS empdepartment
@@ -21,11 +20,33 @@ FROM
     employee
     INNER JOIN role on role.roleID = employee.emp_roleID
     INNER JOIN department on department.depID = employee.emp_depID
-    INNER JOIN status on status.staID = employee.emp_stalD ;" ;
+    INNER JOIN status on status.staID = employee.emp_stalD
+    ORDER BY empID ASC
+     ;" ;
+$rs_emp = mysqli_query($condb, $query_emp);
 
-// Where member.mem_status != 2 and member.mem_level != 0;" ;
-$rs_mem = mysqli_query($condb, $query_mem);
+//ข้อมูลตำแหน่ง
+$query_dept = "SELECT
+    depID,
+    depName
+FROM 
+    department;";
+$rs_dept = mysqli_query($condb, $query_dept);
+
+
+//ข้อมูลแผนก
+$query_role = "SELECT
+    roleID,
+    roleName
+FROM 
+    role
+    WHERE role_staID = 'STA0000003'
+    ;";
+$rs_role = mysqli_query($condb, $query_role);
+
+
 ?>
+
 
 
 <br>
@@ -58,56 +79,45 @@ $rs_mem = mysqli_query($condb, $query_mem);
                                         <th>รหัสพนักงาน</th>
                                         <th>ชื่อ-สกุล</th>
                                         <th>เพศ</th>
-                                        <th>อายุ</th>
                                         <th>เบอร์โทร</th>
                                         <th>แผนก</th>
                                         <th>ตำแหน่ง</th>
+                                        <!-- <th>ดูเพิ่มเติม</th> -->
                                         <th>แก้ไข</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($rs_mem as $row_mem) { ?>
+                                    <?php foreach ($rs_emp as $row_emp) { ?>
 
 
                                     <tr>
                                         <td><?php echo @$l+=1; ?></td>
-                                        <td><?php echo $row_mem['empID']; ?></td>
-                                        <td><?php echo $row_mem['fullname']; ?></td>
-                                        <td><?php echo $row_mem['empGender']; ?></td>
-                                        <td><?php echo $row_mem['age']; ?></td>
-                                        <td><?php echo $row_mem['empPhone']; ?></td>
-                                        <td><?php echo $row_mem['emprole']; ?></td>
-                                        <td><?php echo $row_mem['empdepartment']; ?></td>
-                                        <td>
-                                            <p style="margin-bottom: 10px;">
-                                                <a 
-                                                    class="btn btn-warning"><i class="fas fa-pencil-alt"></i> แก้ไข</a>
-                                            </p>
-
-                                        </td>
+                                        <td><?php echo $row_emp['empID']; ?></td>
+                                        <td><?php echo $row_emp['fullname']; ?></td>
+                                        <td><?php
+                                        if($row_emp['empGender']=="M"){
+                                            echo "ชาย";
+                                        }else{
+                                            echo "หญิง";
+                                        }
+                                        ?></td>
+                                        <td><?php echo $row_emp['empPhone']; ?></td>
+                                        <td><?php echo $row_emp['emprole']; ?></td>
+                                        <td><?php echo $row_emp['empdepartment']; ?></td>
                                         <!-- <td>
-                                            <?php if($row_mem['mem_status']=='1'){ ?>
-                                            <a href="mem_db.php?mem_id=<?php echo $row_mem['mem_id']; ?>&&member=status&&mem_status=0"
-                                                class="btn btn-success"><i class=""></i>ปกติ</a>
-                                            <?php } else {?>
-                                            <a href="mem_db.php?mem_id=<?php echo $row_mem['mem_id']; ?>&&member=status&&mem_status=1"
-                                                class="btn btn-secondary"><i class=""></i>ถูกระงับ</a>
-                                            <?php }?>
-                                        </td>
-
+                                            <a href="" class="btn btn-info" target="" data-toggle="modal"
+                                                data-target="#Modal<?php echo $row_thesis['thesis_id'];?>"><i
+                                                    class="fas fas fa-eye"></i></a>
+                                            <?php 
+                                            // include 'detail_thesis_modal.php';
+                                            ?>
+                                        </td> -->
                                         <td>
                                             <p style="margin-bottom: 10px;">
-                                                <a href="edit_mem.php?mem_id=<?php echo $row_mem['mem_id']; ?>"
-                                                    class="btn btn-warning"><i class="fas fa-pencil-alt"></i> แก้ไข</a>
+                                                <a class="btn btn-warning"><i class="fas fa-pencil-alt"></i> แก้ไข</a>
                                             </p>
-
                                         </td>
-                                        <td><a href="mem_db.php?mem_id=<?php echo $row_mem['mem_id']; ?>&&member=del"
-                                                onclick="return confirm('ต้องการลบข้อมูลนี้ใช่หรือไม่')"
-                                                class="del-btn btn btn-danger"><i class="fas fas fa-trash"></i> ลบ</a>
-                                        </td> -->
-
                                     </tr>
                                     <?php }?>
                                 </tbody>
@@ -128,9 +138,9 @@ $rs_mem = mysqli_query($condb, $query_mem);
 <div class="modal fade" id="employeeModal" tabindex="-1" role="dialog" aria-labelledby="employeeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
-        <form action="" method="POST" enctype="multipart/form-data">
+        <form action="employee_db.php" method="POST" enctype="multipart/form-data">
 
-            <input type="hidden" name="departments" value="add">
+            <input type="hidden" name="employee" value="add">
 
             <div class="modal-content">
                 <div class="modal-header bg-primary">
@@ -169,7 +179,7 @@ $rs_mem = mysqli_query($condb, $query_mem);
                     <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">รหัสผ่าน </label>
                         <div class="col-sm-10">
-                            <input name="emp_Username" type="password" required class="form-control"
+                            <input name="emp_Password" type="password" required class="form-control"
                                 placeholder="นามสกุล" minlength="3" />
                         </div>
                     </div> -->
@@ -177,7 +187,7 @@ $rs_mem = mysqli_query($condb, $query_mem);
                     <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">เพศ</label>
                         <div class="col-sm-10">
-                            <select class="form-control select2" name="gender" id="gender" required>
+                            <select class="form-control select2" name="emp_gender" id="emp_gender" required>
                                 <option value="">-- เลือกเพศ --</option>
                                 <option value="M">ชาย</option>
                                 <option value="F">หญิง</option>
@@ -185,25 +195,11 @@ $rs_mem = mysqli_query($condb, $query_mem);
                         </div>
                     </div>
 
-                    <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">วันเกิด</label>
-                        <div class="col-sm-10">
-                            <div class="input-group date" id="reservationdate" data-target-input="nearest">
-                                <input type="text" class="form-control datetimepicker-input"
-                                    data-target="#reservationdate" placeholder="เลือกวันเกิด" />
-                                <div class="input-group-append" data-target="#reservationdate"
-                                    data-toggle="datetimepicker">
-                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
 
                     <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">เบอร์โทร </label>
                         <div class="col-sm-10">
-                            <input name="emp_Lname" type="text" required class="form-control" placeholder="นามสกุล"
+                            <input name="emp_Phone" type="text" required class="form-control" placeholder="เบอร์โทร"
                                 minlength="3" />
                         </div>
                     </div>
@@ -211,7 +207,13 @@ $rs_mem = mysqli_query($condb, $query_mem);
                     <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">แผนก</label>
                         <div class="col-sm-10">
-                            <select class="form-control select2" name="department" id="department" required>
+                            <select class="form-control select2" name="emp_department" id="emp_department" required>
+                                <option value="">เลือกแผนก</option>
+                                <?php
+                                    while ($row = mysqli_fetch_assoc($rs_dept)) {
+                                        echo '<option value="' . $row['depID'] . '">' . $row['depName'] . '</option>';
+                                    }
+                                    ?>
                             </select>
                         </div>
                     </div>
@@ -219,7 +221,13 @@ $rs_mem = mysqli_query($condb, $query_mem);
                     <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">ตำแหน่ง</label>
                         <div class="col-sm-10">
-                            <select class="form-control select2" name="role" id="role" required>
+                            <select class="form-control select2" name="emp_role" id="emp_role" required>
+                                <option value="">เลือกตำแหน่ง</option>
+                                <?php
+                                    while ($row = mysqli_fetch_assoc($rs_role)) {
+                                        echo '<option value="' . $row['roleID'] . '">' . $row['roleName'] . '</option>';
+                                    }
+                                    ?>
                             </select>
                         </div>
                     </div>

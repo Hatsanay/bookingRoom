@@ -2,7 +2,7 @@
 $active = "";
 include("header.php");
 $userEmpID = $_SESSION['userEmpID'];
-// $query_mem = "SELECT 
+// $query_emp = "SELECT 
 //     member.userEmpID,
 //     member.mem_sid,
 //     member.mem_cid,
@@ -20,8 +20,8 @@ $userEmpID = $_SESSION['userEmpID'];
 // JOIN 
 //     faculties ON departments.dep_fac_id = faculties.fac_id
 // Where  member.userEmpID = $userEmpID " ;
-// $rs_mem = mysqli_query($condb, $query_mem);
-// $row=mysqli_fetch_array($rs_mem);
+// $rs_emp = mysqli_query($condb, $query_emp);
+// $row=mysqli_fetch_array($rs_emp);
 ?>
 
 
