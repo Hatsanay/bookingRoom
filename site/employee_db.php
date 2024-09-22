@@ -34,7 +34,7 @@ if ($row) {
     $empCountLock = "0";
     $emp_department = mysqli_real_escape_string($condb, $_POST["emp_department"]);
     $emp_role = mysqli_real_escape_string($condb, $_POST["emp_role"]);
-    $emp_stalD = "STA0000003";
+    $emp_stalD = "STA0000001";
     $sql = "INSERT INTO employee (
         empID,
         empFname,
@@ -74,4 +74,44 @@ if ($row) {
     }
 
 }
+
+if (isset($_GET['id'])) {
+    $empID = $_GET['id'];
+    $query = "SELECT empID, empFname, empLname, empGender, empPhone, emp_roleID, emp_depID, emp_stalD
+              FROM employee WHERE empID = '$empID'";
+    $result = mysqli_query($condb, $query);
+    $row = mysqli_fetch_assoc($result);
+    
+    echo json_encode($row);
+    exit();
+}
+
+
+
+
+
+
+if ($_POST['employee'] == 'Edit') {
+    $empID = $_POST['empID'];
+    $empFname = $_POST['emp_Fname'];
+    $empLname = $_POST['emp_Lname'];
+    $empGender = $_POST['emp_gender'];
+    $empPhone = $_POST['emp_Phone'];
+    $empDepartment = $_POST['emp_department2'];
+    $empRole = $_POST['emp_role2'];
+    $empStatus = $_POST['emp_status2'];
+
+    $query = "UPDATE employee 
+              SET empFname = '$empFname', empLname = '$empLname', empGender = '$empGender', empPhone = '$empPhone', emp_roleID = '$empRole', emp_depID = '$empDepartment' , emp_stalD = '$empStatus'
+              WHERE empID = '$empID'";
+    
+    if (mysqli_query($condb, $query)) {
+        header("Location: employee.php?status=success");
+    } else {
+        header("Location: employee.php?status=error");
+    }
+}
+
+
+
 ?>
