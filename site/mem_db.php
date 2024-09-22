@@ -107,10 +107,10 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
 } elseif (isset($_POST['member']) && $_POST['member']=="rePass") {
 
     $userEmpID = mysqli_real_escape_string($condb, $_POST["userEmpID"]);
-    $query_mem = "SELECT * FROM member WHERE userEmpID = $userEmpID;";
+    $query_emp = "SELECT * FROM member WHERE userEmpID = $userEmpID;";
 
-    $rs_mem = mysqli_query($condb, $query_mem);
-    $row=mysqli_fetch_array($rs_mem);
+    $rs_emp = mysqli_query($condb, $query_emp);
+    $row=mysqli_fetch_array($rs_emp);
     $mem_password=  sha1($row['mem_cid']) ;
 
     $sql = "UPDATE member SET 
@@ -133,9 +133,9 @@ if (isset($_POST['member']) && $_POST['member']=="add") {
     $new_password = sha1(mysqli_real_escape_string($condb, $_POST["mem_newpass"]));
     $confirm_new_password = sha1(mysqli_real_escape_string($condb, $_POST["mem_newpass2"]));
 
-    $query_mem = "SELECT * FROM member WHERE userEmpID = $userEmpID;";
-    $rs_mem = mysqli_query($condb, $query_mem);
-    $row = mysqli_fetch_array($rs_mem);
+    $query_emp = "SELECT * FROM member WHERE userEmpID = $userEmpID;";
+    $rs_emp = mysqli_query($condb, $query_emp);
+    $row = mysqli_fetch_array($rs_emp);
     $current_password = $row['mem_password'];
 
 
