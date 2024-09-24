@@ -30,6 +30,7 @@ if ($row) {
     $emp_Username = mysqli_real_escape_string($condb, $emp_ID);
     $emp_Password = mysqli_real_escape_string($condb, sha1($emp_ID));
     $emp_gender = mysqli_real_escape_string($condb, $_POST["emp_gender"]);
+    $emp_bDate = mysqli_real_escape_string($condb, $_POST["emp_bDate"]);
     $emp_Phone = mysqli_real_escape_string($condb, $_POST["emp_Phone"]);
     $empCountLock = "0";
     $emp_department = mysqli_real_escape_string($condb, $_POST["emp_department"]);
@@ -42,6 +43,7 @@ if ($row) {
         empUserName,
         empPassword,
         empGender,
+        empBdate,
         empPhone,
         empCountLock,
         emp_depID,
@@ -54,6 +56,7 @@ if ($row) {
         '$emp_Username',
         '$emp_Password',
         '$emp_gender',
+        '$emp_bDate',
         '$emp_Phone',
         '$empCountLock',
         '$emp_department',
@@ -77,7 +80,7 @@ if ($row) {
 
 if (isset($_GET['id'])) {
     $empID = $_GET['id'];
-    $query = "SELECT empID, empFname, empLname, empGender, empPhone, emp_roleID, emp_depID, emp_stalD
+    $query = "SELECT empID, empFname, empLname, empGender, empPhone, emp_roleID, emp_depID, emp_stalD ,empBdate
               FROM employee WHERE empID = '$empID'";
     $result = mysqli_query($condb, $query);
     $row = mysqli_fetch_assoc($result);
@@ -92,24 +95,61 @@ if (isset($_GET['id'])) {
 
 
 if ($_POST['employee'] == 'Edit') {
-    $empID = $_POST['empID'];
-    $empFname = $_POST['emp_Fname'];
-    $empLname = $_POST['emp_Lname'];
-    $empGender = $_POST['emp_gender'];
-    $empPhone = $_POST['emp_Phone'];
-    $empDepartment = $_POST['emp_department2'];
-    $empRole = $_POST['emp_role2'];
-    $empStatus = $_POST['emp_status2'];
+    $empPassword = $_POST['emp_Password'];
+    if($empPassword != ""){
+        $empID = $_POST['empID'];
+        $empFname = $_POST['emp_Fname'];
+        $empLname = $_POST['emp_Lname'];
+        $emp_PasswordHash = mysqli_real_escape_string($condb, sha1($empPassword));
+        $empGender = $_POST['emp_gender'];
+        $empbdate = $_POST['emp_bDate2'];
+        $empPhone = $_POST['emp_Phone'];
+        $empDepartment = $_POST['emp_department2'];
+        $empRole = $_POST['emp_role2'];
+        $empStatus = $_POST['emp_status2'];
 
-    $query = "UPDATE employee 
-              SET empFname = '$empFname', empLname = '$empLname', empGender = '$empGender', empPhone = '$empPhone', emp_roleID = '$empRole', emp_depID = '$empDepartment' , emp_stalD = '$empStatus'
-              WHERE empID = '$empID'";
-    
-    if (mysqli_query($condb, $query)) {
-        header("Location: employee.php?status=success");
-    } else {
-        header("Location: employee.php?status=error");
+        $query = "UPDATE employee 
+                SET empFname = '$empFname', empLname = '$empLname', empPassword = '$emp_PasswordHash', empGender = '$empGender', empBdate = '$empbdate', empPhone = '$empPhone', emp_roleID = '$empRole', emp_depID = '$empDepartment' , emp_stalD = '$empStatus'
+                WHERE empID = '$empID'";
+        
+        $result = mysqli_query($condb, $query) or die("Error in query: $query " . mysqli_error($condb) . "<br>$query");
+        if ($result) {
+            echo "<script type='text/javascript'>";
+            echo "window.location = 'employee.php?employee_edit=employee_edit'; ";
+            echo "</script>";
+        } else {
+            echo "<script type='text/javascript'>";
+            echo "window.location = 'employee.php?mem_add_error=mem_add_error'; ";
+            echo "</script>";
+        }
+    }else{
+        $empID = $_POST['empID'];
+        $empFname = $_POST['emp_Fname'];
+        $empLname = $_POST['emp_Lname'];
+        $empGender = $_POST['emp_gender'];
+        $empbdate = $_POST['emp_bDate2'];
+        $empPhone = $_POST['emp_Phone'];
+        $empDepartment = $_POST['emp_department2'];
+        $empRole = $_POST['emp_role2'];
+        $empStatus = $_POST['emp_status2'];
+
+        $query = "UPDATE employee 
+                SET empFname = '$empFname', empLname = '$empLname', empGender = '$empGender', empBdate = '$empbdate', empPhone = '$empPhone', emp_roleID = '$empRole', emp_depID = '$empDepartment' , emp_stalD = '$empStatus'
+                WHERE empID = '$empID'";
+        
+        $result = mysqli_query($condb, $query) or die("Error in query: $query " . mysqli_error($condb) . "<br>$query");
+        if ($result) {
+            echo "<script type='text/javascript'>";
+            echo "window.location = 'employee.php?employee_edit=employee_edit'; ";
+            echo "</script>";
+        } else {
+            echo "<script type='text/javascript'>";
+            echo "window.location = 'employee.php?mem_add_error=mem_add_error'; ";
+            echo "</script>";
+        }
     }
+
+    
 }
 
 

@@ -87,6 +87,21 @@ $(function() {
 <?php } ?>
 
 
+<?php if(isset($_GET['employee_edit'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'แก้ไขข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'employee.php';
+    }
+  });
+</script>
+<?php } ?>
+
 
 
 
