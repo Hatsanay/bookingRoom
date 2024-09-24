@@ -15,6 +15,7 @@ $query_emp = "SELECT
     empGender,
     empPhone,
     role.roleName AS emprole,
+    TIMESTAMPDIFF(YEAR, empBdate, CURDATE()) AS age,
     department.depName AS empdepartment
 FROM 
     employee
@@ -112,9 +113,10 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                                         <th>รหัสพนักงาน</th>
                                         <th>ชื่อ-สกุล</th>
                                         <th>เพศ</th>
+                                        <th>อายุ</th>
                                         <th>เบอร์โทร</th>
-                                        <th>แผนก</th>
                                         <th>ตำแหน่ง</th>
+                                        <th>แผนก</th>
                                         <!-- <th>ดูเพิ่มเติม</th> -->
                                         <th>แก้ไข</th>
 
@@ -135,6 +137,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                                             echo "หญิง";
                                         }
                                         ?></td>
+                                        <td><?php echo $row_emp['age']; ?></td>
                                         <td><?php echo $row_emp['empPhone']; ?></td>
                                         <td><?php echo $row_emp['emprole']; ?></td>
                                         <td><?php echo $row_emp['empdepartment']; ?></td>
@@ -231,6 +234,13 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                             </select>
                         </div>
                     </div>
+
+                    <!-- <div class="form-group row">
+                        <label for="" class="col-sm-2 col-form-label">วันเกิด</label>
+                        <div class="col-sm-10">
+                        <input  name="Ddate" type="date" required class="form-control" id="Ddate" value="" placeholder="วัน/เดือน/ปีเกิด" />
+                        </div>
+                    </div> -->
 
 
                     <div class="form-group row">
