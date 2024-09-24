@@ -16,6 +16,7 @@ $query_emp = "SELECT
     empPhone,
     role.roleName AS emprole,
     TIMESTAMPDIFF(YEAR, empBdate, CURDATE()) AS age,
+    empBdate,
     department.depName AS empdepartment
 FROM 
     employee
@@ -235,12 +236,13 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                         </div>
                     </div>
 
-                    <!-- <div class="form-group row">
+                    <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">วันเกิด</label>
                         <div class="col-sm-10">
-                        <input  name="Ddate" type="date" required class="form-control" id="Ddate" value="" placeholder="วัน/เดือน/ปีเกิด" />
+                            <input name="emp_bDate" type="date" required class="form-control" id="emp_bDate" value=""
+                                placeholder="วัน/เดือน/ปีเกิด" />
                         </div>
-                    </div> -->
+                    </div>
 
 
                     <div class="form-group row">
@@ -336,12 +338,35 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
+                        <label for="" class="col-sm-2 col-form-label">รหัสผ่าน</label>
+                        <div class="col-sm-10 input-group">
+                            <input name="emp_Password" type="password" required class="form-control"
+                                placeholder="รหัสผ่าน" minlength="3" id="emp_Password" disabled />
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-secondary" id="togglePassword">
+                                    <i class="fas fa-pencil-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group row">
                         <label for="emp_gender" class="col-sm-2 col-form-label">เพศ</label>
                         <div class="col-sm-10">
                             <select class="form-control select2" name="emp_gender" id="emp_gender" required>
                                 <option value="M">ชาย</option>
                                 <option value="F">หญิง</option>
                             </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="" class="col-sm-2 col-form-label">วันเกิด</label>
+                        <div class="col-sm-10">
+                            <input name="emp_bDate2" type="date" required class="form-control" id="emp_bDate2" value=""
+                                placeholder="วัน/เดือน/ปีเกิด" />
                         </div>
                     </div>
 
@@ -416,6 +441,21 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
 
 <?php include('footer.php'); ?>
 <script>
+document.getElementById('togglePassword').addEventListener('click', function(e) {
+    const passwordInput = document.getElementById('emp_Password');
+    const icon = this.querySelector('i');
+
+    if (passwordInput.disabled) {
+        passwordInput.disabled = false;
+        icon.classList.remove('a-times');
+        icon.classList.add('fa-square-xmark');
+    } else {
+        passwordInput.disabled = true;
+        icon.classList.remove('a-times');
+        icon.classList.add('fa-pencil-alt');
+    }
+});
+
 $(function() {
     $(".datatable").DataTable();
     $('#example2').DataTable({
@@ -451,6 +491,7 @@ $(document).ready(function() {
                 $('#emp_department2').val(empData.emp_depID).trigger('change');
                 $('#emp_role2').val(empData.emp_roleID).trigger('change');
                 $('#emp_status2').val(empData.emp_stalD).trigger('change');
+                $('#emp_bDate2').val(empData.empBdate).trigger('change');
             }
         });
     });
