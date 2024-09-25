@@ -102,6 +102,21 @@ $(function() {
 </script>
 <?php } ?>
 
+<?php if(isset($_GET['reserve_cancle'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'แก้ไขข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
+
 
 
 

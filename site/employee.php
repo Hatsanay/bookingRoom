@@ -196,7 +196,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">ชื่อ </label>
                         <div class="col-sm-10">
-                            <input name="emp_Fname" type="text" required class="form-control" placeholder="ชื่อ"
+                            <input  name="emp_Fname" type="text" required class="form-control" placeholder="ชื่อ"
                                 minlength="3" />
                         </div>
                     </div>
@@ -248,7 +248,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     <div class="form-group row">
                         <label for="" class="col-sm-2 col-form-label">เบอร์โทร </label>
                         <div class="col-sm-10">
-                            <input name="emp_Phone" type="text" required class="form-control" placeholder="เบอร์โทร"
+                            <input name="emp_Phone" type="number" required class="form-control" placeholder="เบอร์โทร"
                                 minlength="3" />
                         </div>
                     </div>
