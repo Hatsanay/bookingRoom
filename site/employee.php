@@ -3,7 +3,7 @@ $active = "employee";
 include("header.php");
 session_start();
 
-if (substr($permistion, 4, 1) != "1") {
+if (substr($permistion, 5, 1) != "1") {
     session_destroy();
     header("Location: ../logout.php");
     exit();

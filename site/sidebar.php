@@ -52,7 +52,7 @@ $permistion = $_SESSION['userRoleaccess'];
         </ul>
         <?php }?>
 
-        <?php if(substr($permistion,1,1)== "1"||substr($permistion,2,1)== "1"){?> <!-- bitที่2 และ 3 -->
+        <?php if(substr($permistion,1,1)== "1"||substr($permistion,2,1)== "1"||substr($permistion,3,1)== "1"||substr($permistion,4,1)== "1"){?> <!-- bitที่2 และ 3 -->
         <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
          
           <li class="nav-header">เมนู</li>
@@ -81,16 +81,24 @@ $permistion = $_SESSION['userRoleaccess'];
             </a>
           </li>
         <?php }?>
+        <?php if(substr($permistion,4,1)== "1"){?> <!-- bitที่4 -->
+          <li class="nav-item">
+            <a href="cancel.php" class="nav-link <?php if($active=="cancel"){echo "active";} ?> ">
+            <i class="nav-icon fas far fa-calendar-times"></i>
+              <p>ยกเลิกการจอง</p>
+            </a>
+          </li>
+        <?php }?>
         </ul>
         <?php }?>
 
        <hr>
         
-       <?php if(substr($permistion,4,1)== "1"){?> <!-- bitที่ 5 6 7 -->
+       <?php if(substr($permistion,5,1)== "1"){?> <!-- bitที่ 5 6 7 -->
         <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
    
           <li class="nav-header">การตั้งค่าข้อมูลระบบ</li>
-          <?php if(substr($permistion,4,1)== "1"){?> <!-- bitที่5 -->
+          <?php if(substr($permistion,5,1)== "1"){?> <!-- bitที่5 -->
           <li class="nav-item">
             <a href="employee.php" class="nav-link <?php if($active=="employee"){echo "active";} ?> ">
               <i class="nav-icon fa fa-users"></i>
@@ -98,7 +106,7 @@ $permistion = $_SESSION['userRoleaccess'];
             </a>
           </li>
         <?php }?>
-        <?php if(substr($permistion,5,1)== "1"){?> <!-- bitที่6 -->
+        <?php if(substr($permistion,6,1)== "1"){?> <!-- bitที่6 -->
           <li class="nav-item">
             <a href="role.php" class="nav-link <?php if($active=="role"){echo "active";} ?> ">
               <i class="nav-icon fas fa-university"></i>
@@ -106,7 +114,7 @@ $permistion = $_SESSION['userRoleaccess'];
             </a>
           </li>
           <?php }?>
-        <?php if(substr($permistion,6,1)== "1"){?> <!-- bitที่6 -->
+        <?php if(substr($permistion,7,1)== "1"){?> <!-- bitที่6 -->
           <li class="nav-item">
             <a href="room.php" class="nav-link <?php if($active=="room"){echo "active";} ?> ">
               <i class="nav-icon fas fa-clipboard-list"></i>
