@@ -2,40 +2,36 @@
 include('../condb.php');
 
 if (isset($_POST['employee']) && $_POST['employee'] == "add") {
-    
-    $query_empId = "SELECT
-    empID
-FROM 
-    employee
-    ORDER BY empID DESC LIMIT 1
-    ;" ;
-$rs_id = mysqli_query($condb, $query_empId);
-$row = mysqli_fetch_assoc($rs_id);
+
+    $query_empId = "SELECT empID FROM (SELECT empID FROM employee ORDER BY empID DESC) WHERE ROWNUM = 1";
+    $rs_id = oci_parse($condb, $query_empId);
+    oci_execute($rs_id);
+    $row = oci_fetch_assoc($rs_id);
+
+    if ($row) {
+        $rs_id = $row['EMPID'];
+        $cha_ID = substr($rs_id, 0, 3);
+        $int_ID = substr($rs_id, 3);
+        $new_int_ID = str_pad((int)$int_ID + 1, 7, '0', STR_PAD_LEFT);
+        $emp_ID = $cha_ID . $new_int_ID;
+    } else {
+        $emp_ID = "EMP0000001";
+    }
 
 
-if ($row) {
-    $rs_id = $row['empID'];
-    $cha_ID = substr($rs_id, 0, 3);
-    $int_ID = substr($rs_id, 3);
-    $new_int_ID = str_pad((int)$int_ID + 1, 7, '0', STR_PAD_LEFT);
-    $emp_ID = $cha_ID . $new_int_ID;
-} else {
-    $emp_ID = "EMP0000001";
-}
-
-    $emp_Fname = mysqli_real_escape_string($condb, $_POST["emp_Fname"]);
-    $emp_Lname = mysqli_real_escape_string($condb, $_POST["emp_Lname"]);
-    // $emp_Username = mysqli_real_escape_string($condb, $_POST["emp_Username"]);
-    // $emp_Password = mysqli_real_escape_string($condb, sha1($_POST["emp_Password"]));
-    $emp_Username = mysqli_real_escape_string($condb, $emp_ID);
-    $emp_Password = mysqli_real_escape_string($condb, sha1($emp_ID));
-    $emp_gender = mysqli_real_escape_string($condb, $_POST["emp_gender"]);
-    $emp_bDate = mysqli_real_escape_string($condb, $_POST["emp_bDate"]);
-    $emp_Phone = mysqli_real_escape_string($condb, $_POST["emp_Phone"]);
+    $emp_Fname = trim($_POST["emp_Fname"]);
+    $emp_Lname = trim($_POST["emp_Lname"]);
+    $emp_Username = $emp_ID;
+    $emp_Password = sha1($emp_ID);
+    $emp_gender = $_POST["emp_gender"];
+    $emp_bDate = $_POST["emp_bDate"];
+    $emp_Phone = $_POST["emp_Phone"];
     $empCountLock = "0";
-    $emp_department = mysqli_real_escape_string($condb, $_POST["emp_department"]);
-    $emp_role = mysqli_real_escape_string($condb, $_POST["emp_role"]);
+    $emp_department = $_POST["emp_department"];
+    $emp_role = $_POST["emp_role"];
     $emp_stalD = "STA0000001";
+
+
     $sql = "INSERT INTO employee (
         empID,
         empFname,
@@ -50,108 +46,111 @@ if ($row) {
         emp_roleID,
         emp_stalD
     ) VALUES (
-        '$emp_ID',
-        '$emp_Fname',
-        '$emp_Lname',
-        '$emp_Username',
-        '$emp_Password',
-        '$emp_gender',
-        '$emp_bDate',
-        '$emp_Phone',
-        '$empCountLock',
-        '$emp_department',
-        '$emp_role',
-        '$emp_stalD'
+        :emp_ID,
+        :emp_Fname,
+        :emp_Lname,
+        :emp_Username,
+        :emp_Password,
+        :emp_gender,
+        TO_DATE(:emp_bDate, 'YYYY-MM-DD'),
+        :emp_Phone,
+        :empCountLock,
+        :emp_department,
+        :emp_role,
+        :emp_stalD
     )";
 
-    $result = mysqli_query($condb, $sql) or die("Error in query: $sql " . mysqli_error($condb) . "<br>$sql");
+    $stmt = oci_parse($condb, $sql);
+    oci_bind_by_name($stmt, ':emp_ID', $emp_ID);
+    oci_bind_by_name($stmt, ':emp_Fname', $emp_Fname);
+    oci_bind_by_name($stmt, ':emp_Lname', $emp_Lname);
+    oci_bind_by_name($stmt, ':emp_Username', $emp_Username);
+    oci_bind_by_name($stmt, ':emp_Password', $emp_Password);
+    oci_bind_by_name($stmt, ':emp_gender', $emp_gender);
+    oci_bind_by_name($stmt, ':emp_bDate', $emp_bDate);
+    oci_bind_by_name($stmt, ':emp_Phone', $emp_Phone);
+    oci_bind_by_name($stmt, ':empCountLock', $empCountLock);
+    oci_bind_by_name($stmt, ':emp_department', $emp_department);
+    oci_bind_by_name($stmt, ':emp_role', $emp_role);
+    oci_bind_by_name($stmt, ':emp_stalD', $emp_stalD);
+
+    $result = oci_execute($stmt, OCI_NO_AUTO_COMMIT);
 
     if ($result) {
+        oci_commit($condb);
         echo "<script type='text/javascript'>";
         echo "window.location = 'employee.php?employee_add=employee_add'; ";
         echo "</script>";
     } else {
+        $e = oci_error($stmt);
         echo "<script type='text/javascript'>";
-        echo "window.location = 'employee.php?mem_add_error=mem_add_error'; ";
+        echo "alert('Error: " . htmlentities($e['message']) . "');";
+        echo "window.location = 'employee.php?employee_add_error=employee_add_error'; ";
         echo "</script>";
     }
-
 }
 
 if (isset($_GET['id'])) {
     $empID = $_GET['id'];
-    $query = "SELECT empID, empFname, empLname, empGender, empPhone, emp_roleID, emp_depID, emp_stalD ,empBdate
-              FROM employee WHERE empID = '$empID'";
-    $result = mysqli_query($condb, $query);
-    $row = mysqli_fetch_assoc($result);
-    
+    $query = "SELECT empID AS \"empID\", empFname AS \"empFname\", empLname AS \"empLname\", empGender AS \"empGender\", empPhone AS \"empPhone\", emp_roleID AS \"emp_roleID\", emp_depID AS \"emp_depID\", emp_stalD AS \"emp_stalD\", TO_CHAR(empBdate, 'YYYY-MM-DD') AS \"empBdate\"
+              FROM employee WHERE empID = :empID";
+    $stmt = oci_parse($condb, $query);
+    oci_bind_by_name($stmt, ':empID', $empID);
+    oci_execute($stmt);
+    $row = oci_fetch_assoc($stmt);
+
     echo json_encode($row);
     exit();
 }
 
+if (isset($_POST['employee']) && $_POST['employee'] == 'Edit') {
+    $empID = $_POST['empID'];
+    $empFname = trim($_POST['emp_Fname']);
+    $empLname = trim($_POST['emp_Lname']);
+    $empGender = $_POST['emp_gender'];
+    $empbdate = $_POST['emp_bDate2'];
+    $empPhone = $_POST['emp_Phone'];
+    $empDepartment = $_POST['emp_department2'];
+    $empRole = $_POST['emp_role2'];
+    $empStatus = $_POST['emp_status2'];
 
-
-
-
-
-if ($_POST['employee'] == 'Edit') {
-    $empPassword = $_POST['emp_Password'];
-    if($empPassword != ""){
-        $empID = $_POST['empID'];
-        $empFname = $_POST['emp_Fname'];
-        $empLname = $_POST['emp_Lname'];
-        $emp_PasswordHash = mysqli_real_escape_string($condb, sha1($empPassword));
-        $empGender = $_POST['emp_gender'];
-        $empbdate = $_POST['emp_bDate2'];
-        $empPhone = $_POST['emp_Phone'];
-        $empDepartment = $_POST['emp_department2'];
-        $empRole = $_POST['emp_role2'];
-        $empStatus = $_POST['emp_status2'];
-
+    if (!empty($_POST['emp_Password'])) {
+        $empPassword = sha1(trim($_POST['emp_Password']));
         $query = "UPDATE employee 
-                SET empFname = '$empFname', empLname = '$empLname', empPassword = '$emp_PasswordHash', empGender = '$empGender', empBdate = '$empbdate', empPhone = '$empPhone', emp_roleID = '$empRole', emp_depID = '$empDepartment' , emp_stalD = '$empStatus'
-                WHERE empID = '$empID'";
-        
-        $result = mysqli_query($condb, $query) or die("Error in query: $query " . mysqli_error($condb) . "<br>$query");
-        if ($result) {
-            echo "<script type='text/javascript'>";
-            echo "window.location = 'employee.php?employee_edit=employee_edit'; ";
-            echo "</script>";
-        } else {
-            echo "<script type='text/javascript'>";
-            echo "window.location = 'employee.php?mem_add_error=mem_add_error'; ";
-            echo "</script>";
-        }
-    }else{
-        $empID = $_POST['empID'];
-        $empFname = $_POST['emp_Fname'];
-        $empLname = $_POST['emp_Lname'];
-        $empGender = $_POST['emp_gender'];
-        $empbdate = $_POST['emp_bDate2'];
-        $empPhone = $_POST['emp_Phone'];
-        $empDepartment = $_POST['emp_department2'];
-        $empRole = $_POST['emp_role2'];
-        $empStatus = $_POST['emp_status2'];
-
+                SET empFname = :empFname, empLname = :empLname, empPassword = :empPassword, empGender = :empGender, empBdate = TO_DATE(:empbdate, 'YYYY-MM-DD'), empPhone = :empPhone, emp_roleID = :empRole, emp_depID = :empDepartment, emp_stalD = :empStatus
+                WHERE empID = :empID";
+        $stmt = oci_parse($condb, $query);
+        oci_bind_by_name($stmt, ':empPassword', $empPassword);
+    } else {
         $query = "UPDATE employee 
-                SET empFname = '$empFname', empLname = '$empLname', empGender = '$empGender', empBdate = '$empbdate', empPhone = '$empPhone', emp_roleID = '$empRole', emp_depID = '$empDepartment' , emp_stalD = '$empStatus'
-                WHERE empID = '$empID'";
-        
-        $result = mysqli_query($condb, $query) or die("Error in query: $query " . mysqli_error($condb) . "<br>$query");
-        if ($result) {
-            echo "<script type='text/javascript'>";
-            echo "window.location = 'employee.php?employee_edit=employee_edit'; ";
-            echo "</script>";
-        } else {
-            echo "<script type='text/javascript'>";
-            echo "window.location = 'employee.php?mem_add_error=mem_add_error'; ";
-            echo "</script>";
-        }
+                SET empFname = :empFname, empLname = :empLname, empGender = :empGender, empBdate = TO_DATE(:empbdate, 'YYYY-MM-DD'), empPhone = :empPhone, emp_roleID = :empRole, emp_depID = :empDepartment, emp_stalD = :empStatus
+                WHERE empID = :empID";
+        $stmt = oci_parse($condb, $query);
     }
 
-    
+    oci_bind_by_name($stmt, ':empFname', $empFname);
+    oci_bind_by_name($stmt, ':empLname', $empLname);
+    oci_bind_by_name($stmt, ':empGender', $empGender);
+    oci_bind_by_name($stmt, ':empbdate', $empbdate);
+    oci_bind_by_name($stmt, ':empPhone', $empPhone);
+    oci_bind_by_name($stmt, ':empRole', $empRole);
+    oci_bind_by_name($stmt, ':empDepartment', $empDepartment);
+    oci_bind_by_name($stmt, ':empStatus', $empStatus);
+    oci_bind_by_name($stmt, ':empID', $empID);
+
+    $result = oci_execute($stmt, OCI_NO_AUTO_COMMIT);
+
+    if ($result) {
+        oci_commit($condb);
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'employee.php?employee_edit=employee_edit'; ";
+        echo "</script>";
+    } else {
+        $e = oci_error($stmt);
+        echo "<script type='text/javascript'>";
+        echo "alert('Error: " . htmlentities($e['message']) . "');";
+        echo "window.location = 'employee.php?employee_edit_error=employee_edit_error'; ";
+        echo "</script>";
+    }
 }
-
-
-
 ?>

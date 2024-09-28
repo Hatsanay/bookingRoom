@@ -1,54 +1,50 @@
-
 <?php 
-// echo "<pre>";
-// print_r($_POST);
-// echo "<pre>";
-// exit();
-
 session_start();
-if($_POST['user_username']==null){
-  $_SESSION['erroruser']="erroruser";
-  Header("Location: index.php");
+function redirect($url) {
+    header("Location: $url");
+    exit();
 }
-elseif($_POST['user_password']==null){
-  $_SESSION['errorpass']="errorpass";
-  Header("Location: index.php");
-}
-elseif(isset($_POST['user_username'])){
-          include("condb.php");
 
-          $user_username = mysqli_real_escape_string($condb,$_POST['user_username']);
-          $user_password = mysqli_real_escape_string($condb,sha1($_POST['user_password']));
-
-          $chk = trim($user_username) OR trim($user_password);
-          if($chk==''){
-            $_SESSION['error']="error";
-              echo "<script> window.location='index.php'</script>";
-            }
-            else{
-                      $sql="SELECT * FROM employee
-                      INNER JOIN role on role.roleID = employee.emp_roleID
-                      INNER JOIN department on department.depID = employee.emp_depID
-                      INNER JOIN status on status.staID = employee.emp_stalD
-                      WHERE empUserName='".$user_username."' 
-                      AND empPassword='".$user_password."'";
-                      $result = mysqli_query($condb,$sql);
-                    
-                      if(mysqli_num_rows($result)==1){
-                          $row = mysqli_fetch_array($result);
-                            $_SESSION["userEmpID"] = $row["empID"];
-                            $_SESSION["userEmpFname"] = $row["empFname"];
-                            $_SESSION["userEmpLname"] = $row["empLname"];
-                            $_SESSION["userRoleName"] = $row["roleName"];
-                            $_SESSION["userRoleaccess"] = $row["roleaccess"];
-                              Header("Location: site/");           
-                      }else{
-                        $_SESSION['error']="error";
-                        echo "<script> window.location='index.php'</script>";
-                      }
-            }//close else chk trim
-            //exit();
-}else{
-      Header("Location: index.php"); //user & user_password incorrect back to login again
+if (empty($_POST['user_username'])) {
+    $_SESSION['erroruser'] = "กรุณากรอกชื่อผู้ใช้";
+    redirect("index.php");
 }
+
+if (empty($_POST['user_password'])) {
+    $_SESSION['errorpass'] = "กรุณากรอกรหัสผ่าน";
+    redirect("index.php");
+}
+
+include("condb.php");
+
+$user_username = trim($_POST['user_username']);
+$user_password = sha1(trim($_POST['user_password']));
+
+$sql = "SELECT empID, empFname, empLname, roleName, roleaccess 
+        FROM employee 
+        INNER JOIN role ON role.roleID = employee.emp_roleID 
+        INNER JOIN department ON department.depID = employee.emp_depID 
+        INNER JOIN status ON status.staID = employee.emp_stalD 
+        WHERE empUserName = :user_username AND empPassword = :user_password";
+
+$result = oci_parse($condb, $sql);
+oci_bind_by_name($result, ':user_username', $user_username);
+oci_bind_by_name($result, ':user_password', $user_password);
+oci_execute($result);
+
+if ($row = oci_fetch_assoc($result)) {
+    $_SESSION["userEmpID"] = $row["EMPID"];
+    $_SESSION["userEmpFname"] = $row["EMPFNAME"];
+    $_SESSION["userEmpLname"] = $row["EMPLNAME"];
+    $_SESSION["userRoleName"] = $row["ROLENAME"];
+    $_SESSION["userRoleaccess"] = $row["ROLEACCESS"];
+
+    redirect("site/");
+} else {
+    $_SESSION['error'] = "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง";
+    redirect("index.php");
+}
+
+oci_free_statement($result);
+oci_close($condb);
 ?>

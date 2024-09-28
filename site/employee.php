@@ -1,88 +1,84 @@
 <?php 
 $active = "employee";
 include("header.php");
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+    session_start();
+}
 
 if (substr($permistion, 5, 1) != "1") {
     session_destroy();
     header("Location: ../logout.php");
     exit();
 }
-//ข้อมูลพนักงาน
+
+// ข้อมูลพนักงาน
 $query_emp = "SELECT
-    empID,
-    CONCAT(empFname, ' ', empLname) AS fullname,
-    empGender,
-    empPhone,
-    role.roleName AS emprole,
-    TIMESTAMPDIFF(YEAR, empBdate, CURDATE()) AS age,
-    empBdate,
-    department.depName AS empdepartment
+    empID AS \"empID\",
+    empFname || ' ' || empLname AS \"fullname\",
+    empGender AS \"empGender\",
+    empPhone AS \"empPhone\",
+    role.roleName AS \"emprole\",
+    EXTRACT(YEAR FROM SYSDATE) - EXTRACT(YEAR FROM empBdate) AS \"age\",
+    empBdate AS \"empBdate\",
+    department.depName AS \"empdepartment\"
 FROM 
     employee
-    INNER JOIN role on role.roleID = employee.emp_roleID
-    INNER JOIN department on department.depID = employee.emp_depID
-    INNER JOIN status on status.staID = employee.emp_stalD
-    WHERE emp_stalD = 'STA0000001'
-    ORDER BY empID ASC
-     ;" ;
-$rs_emp = mysqli_query($condb, $query_emp);
+    INNER JOIN role ON role.roleID = employee.emp_roleID
+    INNER JOIN department ON department.depID = employee.emp_depID
+    INNER JOIN status ON status.staID = employee.emp_stalD
+WHERE emp_stalD = 'STA0000001'
+ORDER BY empID ASC";
+$rs_emp = oci_parse($condb, $query_emp);
+oci_execute($rs_emp);
 
-//ข้อมูลตำแหน่ง
+// ข้อมูลแผนก
 $query_dept = "SELECT
-    depID,
-    depName
+    depID AS \"depID\",
+    depName AS \"depName\"
 FROM 
-    department;";
-$rs_dept = mysqli_query($condb, $query_dept);
+    department";
+$rs_dept = oci_parse($condb, $query_dept);
+oci_execute($rs_dept);
 
-
-//ข้อมูลแผนก
+// ข้อมูลตำแหน่ง
 $query_role = "SELECT
-    roleID,
-    roleName
+    roleID AS \"roleID\",
+    roleName AS \"roleName\"
 FROM 
     role
-    WHERE role_staID = 'STA0000003'
-    ;";
-$rs_role = mysqli_query($condb, $query_role);
+WHERE role_staID = 'STA0000003'";
+$rs_role = oci_parse($condb, $query_role);
+oci_execute($rs_role);
 
-
-//ข้อมูลตำแหน่ง
+// ข้อมูลแผนกสำหรับแก้ไข
 $query_deptEdit = "SELECT
-    depID,
-    depName
+    depID AS \"depID\",
+    depName AS \"depName\"
 FROM 
-    department;";
-$rs_deptEdit = mysqli_query($condb, $query_deptEdit);
+    department";
+$rs_deptEdit = oci_parse($condb, $query_deptEdit);
+oci_execute($rs_deptEdit);
 
-
-//ข้อมูลแผนก
+// ข้อมูลตำแหน่งสำหรับแก้ไข
 $query_roleEdit = "SELECT
-    roleID,
-    roleName
+    roleID AS \"roleID\",
+    roleName AS \"roleName\"
 FROM 
     role
-    WHERE role_staID = 'STA0000003'
-    ;";
-$rs_roleEdit = mysqli_query($condb, $query_roleEdit);
+WHERE role_staID = 'STA0000003'";
+$rs_roleEdit = oci_parse($condb, $query_roleEdit);
+oci_execute($rs_roleEdit);
 
-
-//ข้อมูลสภานะ
+// ข้อมูลสถานะสำหรับแก้ไข
 $query_statusEdit = "SELECT
-    staID,
-    staName
+    staID AS \"staID\",
+    staName AS \"staName\"
 FROM 
     status
-    WHERE sta_statypID = 'STT0000001'
-    ;";
-$rs_statusEdit = mysqli_query($condb, $query_statusEdit);
-
-
-
+WHERE sta_statypID = 'STT0000001'";
+$rs_statusEdit = oci_parse($condb, $query_statusEdit);
+oci_execute($rs_statusEdit);
 ?>
-
-
 
 <br>
 <!-- Main content -->
@@ -118,16 +114,16 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                                         <th>เบอร์โทร</th>
                                         <th>ตำแหน่ง</th>
                                         <th>แผนก</th>
-                                        <!-- <th>ดูเพิ่มเติม</th> -->
                                         <th>แก้ไข</th>
 
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($rs_emp as $row_emp) { ?>
-
-
-                                    <tr>
+                                <?php 
+                                    $l = 0;
+                                    while ($row_emp = oci_fetch_assoc($rs_emp)) { 
+                                    ?>
+                                        <tr>
                                         <td><?php echo @$l+=1; ?></td>
                                         <td><?php echo $row_emp['empID']; ?></td>
                                         <td><?php echo $row_emp['fullname']; ?></td>
@@ -142,14 +138,6 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                                         <td><?php echo $row_emp['empPhone']; ?></td>
                                         <td><?php echo $row_emp['emprole']; ?></td>
                                         <td><?php echo $row_emp['empdepartment']; ?></td>
-                                        <!-- <td>
-                                            <a href="" class="btn btn-info" target="" data-toggle="modal"
-                                                data-target="#Modal<?php echo $row_thesis['thesis_id'];?>"><i
-                                                    class="fas fas fa-eye"></i></a>
-                                            <?php 
-                                            // include 'detail_thesis_modal.php';
-                                            ?>
-                                        </td> -->
                                         <td>
                                             <button class="btn btn-warning btn-edit"
                                                 data-id="<?php echo $row_emp['empID']; ?>" data-toggle="modal"
@@ -157,8 +145,6 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                                                 <i class="fas fa-pencil-alt"></i> แก้ไข
                                             </button>
                                         </td>
-
-
                                     </tr>
                                     <?php }?>
                                 </tbody>
@@ -170,12 +156,9 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
         </div>
     </div>
 
-
-
-
-
 </section>
 
+<!-- Modal สำหรับเพิ่มข้อมูลพนักงาน -->
 <div class="modal fade" id="employeeModal" tabindex="-1" role="dialog" aria-labelledby="employeeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -185,7 +168,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
 
             <div class="modal-content">
                 <div class="modal-header bg-primary">
-                    <h5 class="modal-title" id="employeeModalLabel">เพิ่มข้อมูลสาขา</h5>
+                    <h5 class="modal-title" id="employeeModalLabel">เพิ่มข้อมูลพนักงาน</h5>
                     <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -194,7 +177,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                 <div class="modal-body">
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">ชื่อ </label>
+                        <label for="emp_Fname" class="col-sm-2 col-form-label">ชื่อ </label>
                         <div class="col-sm-10">
                             <input  name="emp_Fname" type="text" required class="form-control" placeholder="ชื่อ"
                                 minlength="3" />
@@ -202,31 +185,15 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">นามสกุล </label>
+                        <label for="emp_Lname" class="col-sm-2 col-form-label">นามสกุล </label>
                         <div class="col-sm-10">
                             <input name="emp_Lname" type="text" required class="form-control" placeholder="นามสกุล"
                                 minlength="3" />
                         </div>
                     </div>
 
-                    <!-- <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">ชื่อผู้ใช้ </label>
-                        <div class="col-sm-10">
-                            <input name="emp_Username" type="text" required class="form-control"
-                                placeholder="ชื่อผู้ใช้" minlength="3" />
-                        </div>
-                    </div>
-
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">รหัสผ่าน </label>
-                        <div class="col-sm-10">
-                            <input name="emp_Password" type="password" required class="form-control"
-                                placeholder="นามสกุล" minlength="3" />
-                        </div>
-                    </div> -->
-
-                    <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">เพศ</label>
+                        <label for="emp_gender" class="col-sm-2 col-form-label">เพศ</label>
                         <div class="col-sm-10">
                             <select class="form-control select2" name="emp_gender" id="emp_gender" required>
                                 <option value="">-- เลือกเพศ --</option>
@@ -237,7 +204,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">วันเกิด</label>
+                        <label for="emp_bDate" class="col-sm-2 col-form-label">วันเกิด</label>
                         <div class="col-sm-10">
                             <input name="emp_bDate" type="date" required class="form-control" id="emp_bDate" value=""
                                 placeholder="วัน/เดือน/ปีเกิด" />
@@ -246,7 +213,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
 
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">เบอร์โทร </label>
+                        <label for="emp_Phone" class="col-sm-2 col-form-label">เบอร์โทร </label>
                         <div class="col-sm-10">
                             <input name="emp_Phone" type="number" required class="form-control" placeholder="เบอร์โทร"
                                 minlength="3" />
@@ -254,12 +221,12 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">แผนก</label>
+                        <label for="emp_department" class="col-sm-2 col-form-label">แผนก</label>
                         <div class="col-sm-10">
                             <select class="form-control select2" name="emp_department" id="emp_department" required>
                                 <option value="">เลือกแผนก</option>
                                 <?php
-                                    while ($row = mysqli_fetch_assoc($rs_dept)) {
+                                    while ($row = oci_fetch_assoc($rs_dept)) {
                                         echo '<option value="' . $row['depID'] . '">' . $row['depName'] . '</option>';
                                     }
                                     ?>
@@ -268,12 +235,12 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">ตำแหน่ง</label>
+                        <label for="emp_role" class="col-sm-2 col-form-label">ตำแหน่ง</label>
                         <div class="col-sm-10">
                             <select class="form-control select2" name="emp_role" id="emp_role" required>
                                 <option value="">เลือกตำแหน่ง</option>
                                 <?php
-                                    while ($row = mysqli_fetch_assoc($rs_role)) {
+                                    while ($row = oci_fetch_assoc($rs_role)) {
                                         echo '<option value="' . $row['roleID'] . '">' . $row['roleName'] . '</option>';
                                     }
                                     ?>
@@ -281,17 +248,6 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                         </div>
                     </div>
 
-
-
-
-                    <!-- <div class="form-group row">
-                  <label for="" class="col-sm-2 col-form-label">คณะ</label>
-                  <div class="col-sm-10">
-                  <select class="form-control select2" name="dep_fac_id" id="dep_fac_id" required>
-                    <option value="">-- เลือกคณะ --</option>
-                  </select>
-                  </div>
-                </div> -->
                 </div>
 
                 <div class="modal-footer">
@@ -303,8 +259,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
     </div>
 </div>
 
-
-
+<!-- Modal สำหรับแก้ไขข้อมูลพนักงาน -->
 <div class="modal fade" id="employeeEditModal" tabindex="-1" role="dialog" aria-labelledby="employeeModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
@@ -338,9 +293,9 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">รหัสผ่าน</label>
+                        <label for="emp_Password" class="col-sm-2 col-form-label">รหัสผ่าน</label>
                         <div class="col-sm-10 input-group">
-                            <input name="emp_Password" type="password" required class="form-control"
+                            <input name="emp_Password" type="password" class="form-control"
                                 placeholder="รหัสผ่าน" minlength="3" id="emp_Password" disabled />
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-outline-secondary" id="togglePassword">
@@ -363,7 +318,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="" class="col-sm-2 col-form-label">วันเกิด</label>
+                        <label for="emp_bDate2" class="col-sm-2 col-form-label">วันเกิด</label>
                         <div class="col-sm-10">
                             <input name="emp_bDate2" type="date" required class="form-control" id="emp_bDate2" value=""
                                 placeholder="วัน/เดือน/ปีเกิด" />
@@ -379,12 +334,12 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="emp_department" class="col-sm-2 col-form-label">แผนก</label>
+                        <label for="emp_department2" class="col-sm-2 col-form-label">แผนก</label>
                         <div class="col-sm-10">
                             <select class="form-control select2" name="emp_department2" id="emp_department2" required>
                                 <option value="">เลือกแผนก</option>
                                 <?php
-                                    while ($row = mysqli_fetch_assoc($rs_deptEdit)) {
+                                    while ($row = oci_fetch_assoc($rs_deptEdit)) {
                                         echo '<option value="' . $row['depID'] . '">' . $row['depName'] . '</option>';
                                     }
                                 ?>
@@ -395,12 +350,12 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="emp_role" class="col-sm-2 col-form-label">ตำแหน่ง</label>
+                        <label for="emp_role2" class="col-sm-2 col-form-label">ตำแหน่ง</label>
                         <div class="col-sm-10">
                             <select class="form-control select2" name="emp_role2" id="emp_role2" required>
                                 <option value="">เลือกตำแหน่ง</option>
                                 <?php
-                                    while ($row = mysqli_fetch_assoc($rs_roleEdit)) {
+                                    while ($row = oci_fetch_assoc($rs_roleEdit)) {
                                         echo '<option value="' . $row['roleID'] . '">' . $row['roleName'] . '</option>';
                                     }
                                 ?>
@@ -409,12 +364,11 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
                     </div>
 
                     <div class="form-group row">
-                        <label for="emp_role" class="col-sm-2 col-form-label">สถานะ</label>
+                        <label for="emp_status2" class="col-sm-2 col-form-label">สถานะ</label>
                         <div class="col-sm-10">
                             <select class="form-control select2" name="emp_status2" id="emp_status2" required>
-                                <!-- <option value="">เลือกสภานะ</option> -->
                                 <?php
-                                    while ($row = mysqli_fetch_assoc($rs_statusEdit)) {
+                                    while ($row = oci_fetch_assoc($rs_statusEdit)) {
                                         echo '<option value="' . $row['staID'] . '">' . $row['staName'] . '</option>';
                                     }
                                 ?>
@@ -433,12 +387,7 @@ $rs_statusEdit = mysqli_query($condb, $query_statusEdit);
     </div>
 </div>
 
-
-
-<!-- /.content -->
-
-
-
+<!-- JavaScript -->
 <?php include('footer.php'); ?>
 <script>
 document.getElementById('togglePassword').addEventListener('click', function(e) {
@@ -447,11 +396,12 @@ document.getElementById('togglePassword').addEventListener('click', function(e) 
 
     if (passwordInput.disabled) {
         passwordInput.disabled = false;
-        icon.classList.remove('a-times');
-        icon.classList.add('fa-square-xmark');
+        icon.classList.remove('fa-pencil-alt');
+        icon.classList.add('fa-times');
     } else {
         passwordInput.disabled = true;
-        icon.classList.remove('a-times');
+        passwordInput.value = "";
+        icon.classList.remove('fa-times');
         icon.classList.add('fa-pencil-alt');
     }
 });
@@ -467,6 +417,7 @@ $(function() {
         "autoWidth": false,
     });
 });
+
 $(document).ready(function() {
     $('.btn-edit').click(function() {
         var empID = $(this).data('id');
@@ -486,8 +437,6 @@ $(document).ready(function() {
                 $('#emp_Lname').val(empData.empLname);
                 $('#emp_gender').val(empData.empGender).trigger('change');
                 $('#emp_Phone').val(empData.empPhone);
-
-
                 $('#emp_department2').val(empData.emp_depID).trigger('change');
                 $('#emp_role2').val(empData.emp_roleID).trigger('change');
                 $('#emp_status2').val(empData.emp_stalD).trigger('change');

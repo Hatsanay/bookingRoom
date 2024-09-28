@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() == PHP_SESSION_NONE) {
+  session_start();
+}
 // $permistion = $_SESSION['permistion']="1111111";
 $permistion = $_SESSION['userRoleaccess'];
 
