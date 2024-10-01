@@ -96,7 +96,7 @@ $permistion = $_SESSION['userRoleaccess'];
 
        <hr>
         
-       <?php if(substr($permistion,5,1)== "1"){?> <!-- bitที่ 5 6 7 -->
+       <?php if(substr($permistion,5,1)== "1"||substr($permistion,6,1)== "1"||substr($permistion,7,1)== "1"){?> <!-- bitที่ 5 6 7 -->
         <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
    
           <li class="nav-header">การตั้งค่าข้อมูลระบบ</li>
