@@ -30,6 +30,7 @@ if (isset($_POST['employee']) && $_POST['employee'] == "add") {
     $emp_department = $_POST["emp_department"];
     $emp_role = $_POST["emp_role"];
     $emp_stalD = "STA0000001";
+    // $emp_lockstalD = "STA0000010";
 
 
     $sql = "INSERT INTO employee (
@@ -45,6 +46,7 @@ if (isset($_POST['employee']) && $_POST['employee'] == "add") {
         emp_depID,
         emp_roleID,
         emp_stalD
+        -- EMP_LOCKSTAID
     ) VALUES (
         :emp_ID,
         :emp_Fname,
@@ -58,6 +60,7 @@ if (isset($_POST['employee']) && $_POST['employee'] == "add") {
         :emp_department,
         :emp_role,
         :emp_stalD
+        -- :emp_lockstalD
     )";
 
     $stmt = oci_parse($condb, $sql);
@@ -73,6 +76,7 @@ if (isset($_POST['employee']) && $_POST['employee'] == "add") {
     oci_bind_by_name($stmt, ':emp_department', $emp_department);
     oci_bind_by_name($stmt, ':emp_role', $emp_role);
     oci_bind_by_name($stmt, ':emp_stalD', $emp_stalD);
+    // oci_bind_by_name($stmt, ':emp_lockstalD', $emp_lockstalD);
 
     $result = oci_execute($stmt, OCI_NO_AUTO_COMMIT);
 
