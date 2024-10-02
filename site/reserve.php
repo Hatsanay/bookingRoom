@@ -5,14 +5,14 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// ตรวจสอบการเชื่อมต่อฐานข้อมูล
+
 if (!$condb) {
     $e = oci_error();
     echo "Failed to connect to Oracle database";
     exit;
 }
 
-// ดึงข้อมูลจากฐานข้อมูล
+
 $query_reserve = "SELECT 
     reserveID AS \"reserveID\",
     room.roomName AS \"roomName\",
@@ -31,6 +31,11 @@ FROM reserveroom
 
 $rs_reserve = oci_parse($condb, $query_reserve);
 oci_execute($rs_reserve);
+
+// ตึก
+$query_building = "SELECT BUIID AS \"buiID\", BUINAME AS \"buiname\" FROM BUILDING";
+$rs_building = oci_parse($condb, $query_building);
+oci_execute($rs_building);
 
 // ดึงข้อมูลที่ใช้ใน FullCalendar
 $events = [];
@@ -62,10 +67,8 @@ $events_json = json_encode($events);
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js'></script>
     <link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
-
     <title>จองห้องประชุม</title>
 </head>
-
 
 <body>
 
@@ -75,7 +78,6 @@ $events_json = json_encode($events);
             <div class="card-header">
                 <h3 class="card-title">จองห้องประชุม</h3>
             </div>
-
             <div class="card-body">
                 <div class="container-fluid">
                     <div class="row">
@@ -88,21 +90,23 @@ $events_json = json_encode($events);
                                         <select class="form-control" name="reserve_building" id="reserve_building"
                                             required>
                                             <option value="">-- เลือกตึก --</option>
-                                            <!-- ตัวเลือกอื่น ๆ -->
+                                            <?php
+                                            while ($row = oci_fetch_assoc($rs_building)) {
+                                                echo '<option value="' . $row['buiID'] . '">' . $row['buiname'] . '</option>';
+                                            }
+                                        ?>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="reserve_floor">ชั้น</label>
                                         <select class="form-control" name="reserve_floor" id="reserve_floor" required>
                                             <option value="">-- เลือกชั้น --</option>
-                                            <!-- ตัวเลือกอื่น ๆ -->
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="reserve_room">ห้อง</label>
                                         <select class="form-control" name="reserve_room" id="reserve_room" required>
                                             <option value="">-- เลือกห้อง --</option>
-                                            <!-- ตัวเลือกอื่น ๆ -->
                                         </select>
                                     </div>
 
@@ -117,7 +121,6 @@ $events_json = json_encode($events);
                     </div>
                 </div>
             </div>
-        </div>
         </div>
     </section>
 
@@ -154,6 +157,107 @@ $events_json = json_encode($events);
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script>
+    $(document).ready(function() {
+        $('#reserve_building').change(function() {
+            var building_id = $(this).val();
+
+            // ล้างข้อมูลเก่า
+            $('#reserve_floor').html('<option value="">-- เลือกชั้น --</option>');
+            $('#reserve_room').html('<option value="">-- เลือกห้อง --</option>');
+
+            if (building_id) {
+                $.ajax({
+                    url: 'reserve_db.php',
+                    type: 'POST',
+                    data: {
+                        building_id: building_id
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+
+                        console.log(response);
+
+                        if (response.length > 0) {
+                            $.each(response, function(index, floor) {
+
+                                $('#reserve_floor').append('<option value="' + floor
+                                    .floorID + '">' + floor.floorName +
+                                    '</option>');
+                            });
+                        } else {
+                            alert('ไม่พบข้อมูลชั้น');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        });
+
+
+        $('#reserve_floor').change(function() {
+            var floor_id = $(this).val();
+
+            // ล้างข้อมูลเก่า
+            $('#reserve_room').html('<option value="">-- เลือกห้อง --</option>');
+
+            if (floor_id) {
+                $.ajax({
+                    url: 'reserve_db.php',
+                    type: 'POST',
+                    data: {
+                        floor_id: floor_id
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        console.log(response);
+                        if (response.length > 0) {
+                            $.each(response, function(index, room) {
+                                $('#reserve_room').append('<option value="' + room
+                                    .roomID + '">' + room.roomName + '</option>'
+                                );
+                            });
+                        } else {
+                            alert('ไม่พบข้อมูลห้อง');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(xhr.responseText);
+                    }
+                });
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        // เมื่อเลือกห้อง
+        $('#reserve_room').change(function() {
+            var room_id = $(this).val();
+
+            if (room_id) {
+                $.ajax({
+                    url: 'reserve_db.php', // ไฟล์ PHP สำหรับดึงข้อมูลการจอง
+                    type: 'POST',
+                    data: {
+                        room_id: room_id
+                    },
+                    dataType: 'json',
+                    success: function(events) {
+                        // อัปเดตปฏิทินด้วยข้อมูลการจองที่เกี่ยวข้องกับห้องที่เลือก
+                        var calendar = FullCalendar.Calendar
+                            .getCalendar(); // ใช้คำสั่งนี้หาก FullCalendar เก่า
+                        calendar.removeAllEvents(); // ลบ events เดิม
+                        calendar.addEventSource(events); // เพิ่ม events ใหม่จากฐานข้อมูล
+                        calendar.refetchEvents(); // รีเฟรชปฏิทิน
+                    }
+                });
+            }
+        });
+    });
+
+
+
     document.addEventListener('DOMContentLoaded', function() {
         var calendarEl = document.getElementById('calendar');
 
@@ -165,7 +269,7 @@ $events_json = json_encode($events);
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
             },
-            events: <?php echo $events_json; ?>, // โหลด events จาก PHP
+            events: [], // เริ่มต้นว่างไว้ เพราะเราจะโหลด events ตามห้องที่เลือก
             dateClick: function(info) {
                 var date = info.dateStr;
                 $('#reserveModal').modal('show');

@@ -104,7 +104,15 @@ oci_execute($rs_emplockHistory);
                                         <td><?php echo ++$l; ?></td>
                                         <td><?php echo $row_emplock['lockID']; ?></td>
                                         <td><?php echo $row_emplock['fullname']; ?></td>
-                                        <td><?php echo $row_emplock['empGender']; ?></td>
+                                        <td>
+                                          <?php
+                                            if($row_emplock['empGender']=="M"){
+                                              echo "ชาย";
+                                            }else{
+                                                echo "หญิง";
+                                            }
+                                          ?>
+                                        </td>
                                         <td><?php echo $row_emplock['age']; ?></td>
                                         <td><?php echo $row_emplock['empPhone']; ?></td>
                                         <td><?php echo $row_emplock['emprole']; ?></td>
@@ -196,7 +204,16 @@ oci_execute($rs_emplockHistory);
                                                 <td><?php echo ++$l; ?></td>
                                                 <td><?php echo $row_emplockHistory['lockID']; ?></td>
                                                 <td><?php echo $row_emplockHistory['fullname']; ?></td>
-                                                <td><?php echo $row_emplockHistory['empGender']; ?></td>
+                                                <td><?php echo $row_emplockHistory['fullname']; ?></td>
+                                                <td>
+                                                  <?php
+                                                    if($row_emplockHistory['empGender']=="M"){
+                                                      echo "ชาย";
+                                                    }else{
+                                                        echo "หญิง";
+                                                    }
+                                                  ?>
+                                                </td>
                                                 <td><?php echo $row_emplockHistory['age']; ?></td>
                                                 <td><?php echo $row_emplockHistory['empPhone']; ?></td>
                                                 <td><?php echo $row_emplockHistory['emprole']; ?></td>
