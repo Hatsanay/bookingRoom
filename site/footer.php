@@ -150,6 +150,7 @@ $(function() {
 <?php } ?>
 
 
+
 <?php if(isset($_GET['reserve_cancle_error'])){ ?>
 <script>
   Swal.fire({
@@ -160,6 +161,36 @@ $(function() {
 }).then((result) => {
     if (result.isConfirmed) {
       window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['cancle_cancel'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'แก้ไขข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'cancel.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['cancle_cancel_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่สามารถแก้ไขข้อมูลได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'cancel.php';
     }
   });
 </script>
