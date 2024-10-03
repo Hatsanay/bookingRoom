@@ -32,7 +32,8 @@ $permistion = $_SESSION['userRoleaccess'];
           
         </div>
         <div class="info">
-        <a href="profile.php" target="" class="d-block"> <?php echo $_SESSION['userEmpFname']," "; echo $_SESSION['userEmpLname'];?> | Profile</a>
+        <!-- <a href="profile.php" target="" class="d-block"> <?php echo $_SESSION['userEmpFname']," "; echo $_SESSION['userEmpLname'];?> | Profile</a> -->
+        <a href="index.php" target="" class="d-block"> <?php echo $_SESSION['userEmpFname']," "; echo $_SESSION['userEmpLname'];?></a>
         </div>
       </div>
 
