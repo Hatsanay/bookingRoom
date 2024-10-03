@@ -309,7 +309,7 @@ oci_execute($rs_statusEdit);
 
                     <div class="form-group row">
                         <label for="emp_gender" class="col-sm-2 col-form-label">เพศ</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-10 input-group">
                             <select class="form-control select2" name="emp_gender" id="emp_gender" required>
                                 <option value="M">ชาย</option>
                                 <option value="F">หญิง</option>
