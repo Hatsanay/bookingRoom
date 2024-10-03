@@ -11,6 +11,8 @@ if (!$condb) {
     exit;
 }
 
+$emp_ID = $_SESSION['userEmpID'];
+
 $query_building = "SELECT BUIID AS buiID, BUINAME AS buiname FROM BUILDING";
 $rs_building = oci_parse($condb, $query_building);
 oci_execute($rs_building);
@@ -78,13 +80,16 @@ oci_execute($rs_duration);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="reserveModalLabel">รายละเอียดการจอง</h5>
+                <h5 class="modal-title" id="reserveModalLabel">รายละเอียดการจอง </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="reserveForm" action="" method="POST">
+                    
+                    <input type="hidden" name="empID" value="<?php echo $emp_ID ?>">
+
                     <div class="form-group">
                         <label for="reserve_date">วันที่จอง</label>
                         <input type="text" class="form-control" id="reserve_date" name="reserve_date" readonly>
