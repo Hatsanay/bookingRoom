@@ -5,20 +5,18 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
-// ตรวจสอบการเชื่อมต่อกับฐานข้อมูล
 if (!$condb) {
     $e = oci_error();
     echo "Failed to connect to Oracle database";
     exit;
 }
 
-// ดึงข้อมูลตึก
 $query_building = "SELECT BUIID AS buiID, BUINAME AS buiname FROM BUILDING";
 $rs_building = oci_parse($condb, $query_building);
 oci_execute($rs_building);
 
-$query_duration = "SELECT DURATIONID AS durationID, 
-TO_CHAR(DURATIONSTARTTIME, 'HH24:MI:SS') || ' - ' || TO_CHAR(DURATIONENDTIME, 'HH24:MI:SS') AS startEndTime 
+$query_duration = "SELECT DURATIONID AS \"durationID\", 
+TO_CHAR(DURATIONSTARTTIME, 'HH24:MI:SS') || ' - ' || TO_CHAR(DURATIONENDTIME, 'HH24:MI:SS') AS \"startEndTime\" 
 FROM DURATION";
 $rs_duration = oci_parse($condb, $query_duration);
 oci_execute($rs_duration);
@@ -37,7 +35,6 @@ oci_execute($rs_duration);
                     <div class="col-md-12">
                         <div class="card-body table-responsive p-0">
                             <form action="" method="POST" enctype="multipart/form-data">
-                                <!-- ฟอร์มเลือกตึก -->
                                 <div class="form-group">
                                     <label for="reserve_building">ตึก</label>
                                     <select class="form-control" name="reserve_building" id="reserve_building" required>
@@ -49,16 +46,12 @@ oci_execute($rs_duration);
                                         ?>
                                     </select>
                                 </div>
-
-                                <!-- ฟอร์มเลือกชั้น -->
                                 <div class="form-group">
                                     <label for="reserve_floor">ชั้น</label>
                                     <select class="form-control" name="reserve_floor" id="reserve_floor" required>
                                         <option value="">-- เลือกชั้น --</option>
                                     </select>
                                 </div>
-
-                                <!-- ฟอร์มเลือกห้อง -->
                                 <div class="form-group">
                                     <label for="reserve_room">ห้อง</label>
                                     <select class="form-control" name="reserve_room" id="reserve_room" required>
@@ -68,7 +61,6 @@ oci_execute($rs_duration);
                             </form>
                         </div>
                     </div>
-                    <!-- ปฏิทิน -->
                     <div class="col-md-12">
                         <div class="card-body table-responsive p-0">
                             <div id="calendar"></div>
@@ -98,19 +90,33 @@ oci_execute($rs_duration);
                         <input type="text" class="form-control" id="reserve_date" name="reserve_date" readonly>
                     </div>
                     <div class="form-group">
+                        <label for="reserve_date">ห้อง</label>
+                        <input type="text" class="form-control" id="reserve_roomname" name="reserve_roomname" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="reserve_date">ความจุห้อง</label>
+                        <input type="text" class="form-control" id="reserve_roomcapacity" name="reserve_roomcapacity"
+                            readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="reserve_date">รายละเอียดห้องเพิ่มเติม</label>
+                        <!-- <input type="text" class="form-control" id="" name="" readonly> -->
+                        <textarea class="form-control" name="reserve_roomdetail" id="reserve_roomdetail" rows="3"
+                            readonly></textarea>
+                    </div>
+                    <div class="form-group">
                         <label for="reserve_time">ช่วงเวลา</label>
-                        <select class="form-control" name="reserve_time" id="reserve_time" required>
-                            <option value="">-- เลือกช่วงเวลา --</option>
+                        <select class="form-control select2" name="emp_role" id="emp_role" required>
+                            <option value="">เลือกช่วงเวลา</option>
                             <?php
-                            // ดึงข้อมูลช่วงเวลา
-                            while ($row = oci_fetch_assoc($rs_duration)) {
-                                echo '<option value="' . $row['durationID'] . '">' . $row['startEndTime'] . '</option>';
-                            }
-                            ?>
+                                    while ($row = oci_fetch_assoc($rs_duration)) {
+                                        echo '<option value="' . $row['durationID'] . '">' . $row['startEndTime'] . '</option>';
+                                    }
+                                    ?>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="reserve_details">รายละเอียดเพิ่มเติม</label>
+                        <label for="reserve_details">หมายเหตุ</label>
                         <textarea class="form-control" name="reserve_details" id="reserve_details" rows="3"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">ยืนยันการจอง</button>
@@ -123,14 +129,15 @@ oci_execute($rs_duration);
 <?php include('footer.php'); ?>
 
 <script>
-// เมื่อเลือกตึก
 $(document).ready(function() {
+    // เมื่อเลือกตึก
     $('#reserve_building').change(function() {
         var building_id = $(this).val();
 
         // ล้างข้อมูลเก่า
         $('#reserve_floor').html('<option value="">-- เลือกชั้น --</option>');
         $('#reserve_room').html('<option value="">-- เลือกห้อง --</option>');
+
 
         if (building_id) {
             $.ajax({
@@ -143,7 +150,8 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.length > 0) {
                         $.each(response, function(index, floor) {
-                            $('#reserve_floor').append('<option value="' + floor.floorID + '">' + floor.floorName + '</option>');
+                            $('#reserve_floor').append('<option value="' + floor
+                                .floorID + '">' + floor.floorName + '</option>');
                         });
                     } else {
                         alert('ไม่พบข้อมูลชั้น');
@@ -174,7 +182,8 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.length > 0) {
                         $.each(response, function(index, room) {
-                            $('#reserve_room').append('<option value="' + room.roomID + '">' + room.roomName + '</option>');
+                            $('#reserve_room').append('<option value="' + room
+                                .roomID + '">' + room.roomName + '</option>');
                         });
                     } else {
                         alert('ไม่พบข้อมูลห้อง');
@@ -190,6 +199,7 @@ $(document).ready(function() {
     // เมื่อเลือกห้อง
     $('#reserve_room').change(function() {
         var room_id = $(this).val();
+
 
         if (room_id) {
             $.ajax({
@@ -211,18 +221,47 @@ $(document).ready(function() {
                                 center: 'title',
                                 right: 'dayGridMonth,timeGridWeek,timeGridDay'
                             },
+                            eventContent: function(info) {
+
+                                var startTime = info.event.start
+                                    .toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    });
+                                var endTime = info.event.end ? info.event.end
+                                    .toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit'
+                                    }) : '';
+
+                                var timeText = document.createElement('div');
+
+
+                                timeText.innerHTML =
+                                    '<span style="color: blue;">&#9679; </span>' +
+                                    startTime + ' - ' + endTime + ' ' + info
+                                    .event.title;
+
+                                return {
+                                    domNodes: [timeText]
+                                };
+                            },
+
                             dateClick: function(info) {
                                 $('#reserveModal').modal('show');
-                                $('#reserve_date').val(info.dateStr); 
+                                $('#reserve_date').val(info.dateStr);
+
+
+                                var roomName = $(
+                                    '#reserve_room option:selected').text();
+                                $('#reserve_roomname').val(roomName);
                             }
                         });
 
                         // ลบ events เดิม
                         calendar.removeAllEvents();
-
                         // เพิ่ม events ใหม่จากฐานข้อมูล
                         calendar.addEventSource(events);
-
                         // แสดงผลปฏิทิน
                         calendar.render();
                     } else {
@@ -234,7 +273,32 @@ $(document).ready(function() {
                 }
             });
         }
+
+        if (room_id) {
+            $.ajax({
+                url: 'reserve_db.php',
+                type: 'POST',
+                data: {
+                    room_id_room: room_id
+                },
+                dataType: 'json',
+                success: function(response) {
+                    console.log("Response Data:",
+                        response);
+                    $('#reserve_roomcapacity').val(response.roomcapacity);
+                    $('#reserve_roomdetail').val(response.roomdetail);
+                },
+                error: function(xhr, status, error) {
+                    console.log("Error fetching room details: ", error);
+                    console.log("XHR Object:", xhr);
+                    console.log("Status:", status);
+                }
+            });
+        }
+
+
     });
+
 
     // ตั้งค่าปฏิทินเริ่มต้นเมื่อโหลดหน้า
     document.addEventListener('DOMContentLoaded', function() {
@@ -249,10 +313,10 @@ $(document).ready(function() {
                     center: 'title',
                     right: 'dayGridMonth,timeGridWeek,timeGridDay'
                 },
-                events: [], 
+                events: [],
                 dateClick: function(info) {
                     $('#reserveModal').modal('show');
-                    $('#reserve_date').val(info.dateStr); 
+                    $('#reserve_date').val(info.dateStr);
                 }
             });
 
@@ -261,7 +325,8 @@ $(document).ready(function() {
             console.error('FullCalendar is not loaded');
         }
     });
-    
+
+
     $(".datatable").DataTable();
     $('#example2').DataTable({
         "paging": true,

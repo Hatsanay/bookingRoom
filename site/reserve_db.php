@@ -37,7 +37,7 @@ if (isset($_POST['floor_id'])) {
     echo json_encode($rooms);
 }
 
-// ดึงข้อมูลการจองที่เกี่ยวข้องกับห้องที่เลือก
+
 if (isset($_POST['room_id'])) {
     $room_id = $_POST['room_id'];
 
@@ -48,7 +48,7 @@ if (isset($_POST['room_id'])) {
         TO_CHAR(reservelWillDate, 'YYYY-MM-DD') AS start_date, 
         TO_CHAR(duration.DurationStartTime, 'HH24:MI:SS') AS start_time, 
         TO_CHAR(duration.DurationEndTime, 'HH24:MI:SS') AS end_time, 
-        reservelDetail AS description 
+        reservelDetail AS description
     FROM reserveroom
     INNER JOIN room ON room.roomID = reserveroom.reservel_roomID
     INNER JOIN duration ON duration.durationID = reserveroom.reservel_durationID
@@ -69,9 +69,33 @@ if (isset($_POST['room_id'])) {
             'title' => $row['ROOMNAME'],
             'start' => $start,
             'end' => $end,
-            'description' => $row['DESCRIPTION']
+            'description' => $row['DESCRIPTION'],
         ];
     }
     echo json_encode($events);
 }
+
+if (isset($_POST['room_id_room'])) {
+    $room_id = $_POST['room_id_room'];
+
+    $query = "SELECT ROOMCAPACITY AS roomcapacity, ROOMDETAIL AS roomdetail
+              FROM room
+              WHERE ROOMID = :room_id";
+
+    $stmt = oci_parse($condb, $query);
+    oci_bind_by_name($stmt, ':room_id', $room_id);
+    oci_execute($stmt);
+
+    $room_details = [];
+    if ($row = oci_fetch_assoc($stmt)) {
+        $room_details = [
+            'roomcapacity' => $row['ROOMCAPACITY'],
+            'roomdetail' => $row['ROOMDETAIL']  
+        ];
+    }
+    echo json_encode($room_details);
+    exit;
+}
+
+
 ?>
