@@ -22,7 +22,12 @@ if (isset($_POST['building_id'])) {
 // ดึงข้อมูลห้องจากชั้นที่เลือก
 if (isset($_POST['floor_id'])) {
     $floor_id = $_POST['floor_id'];
-    $query = "SELECT ROOMID AS roomID, ROOMNAME AS roomName FROM ROOM WHERE ROOM_FLOORID = :floor_id";
+    $query = "SELECT  ROOMID AS roomID,
+    BUILDING.BUINAME || FLOOR.FLOORNAME||ROOMNAME AS roomName
+    FROM ROOM
+    INNER JOIN FLOOR ON FLOOR.FLOORID = ROOM.ROOM_FLOORID
+    INNER JOIN BUILDING ON FLOOR.BUIID = BUILDING.BUIID
+    WHERE ROOM_FLOORID = :floor_id";
     $stmt = oci_parse($condb, $query);
     oci_bind_by_name($stmt, ':floor_id', $floor_id);
     oci_execute($stmt);

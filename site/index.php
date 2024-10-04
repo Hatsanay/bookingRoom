@@ -14,9 +14,9 @@ $emp_ID = $_SESSION['userEmpID'];
 //ข้อมูลการจอง
 $query_reserve = "SELECT 
     reserveID AS \"reserveID\",
-    room.roomName AS \"roomName\",
+    BUILDING.BUINAME || FLOOR.FLOORNAME||ROOMNAME AS \"roomName\",
     reservelWillDate AS \"reservelWillDate\",
-    duration.DurationStartTime || ' ' || duration.DurationEndTime AS \"timebetween\",
+    TO_CHAR(DURATIONSTARTTIME, 'HH24:MI:SS') || ' - ' || TO_CHAR(DURATIONENDTIME, 'HH24:MI:SS') AS \"timebetween\",
     reservelDetail AS \"reservelDetail\",
     status.staName AS \"statuscancle\",
     bookstatus.staName AS \"bookstatus\"
@@ -25,6 +25,8 @@ FROM reserveroom
     INNER JOIN duration ON duration.durationID = reserveroom.reservel_durationID
     INNER JOIN status ON status.staID = reserveroom.reservel_staID
     INNER JOIN status bookstatus ON bookstatus.staID = reserveroom.reservel_BookingstatusID
+    INNER JOIN FLOOR ON FLOOR.FLOORID = ROOM.ROOM_FLOORID
+    INNER JOIN BUILDING ON FLOOR.BUIID = BUILDING.BUIID
     WHERE reserveroom.reservel_BookingstatusID = 'STA0000007'
     AND reservel_empID = :emp_ID";
 $rs_reserve = oci_parse($condb, $query_reserve);
@@ -33,9 +35,9 @@ oci_execute($rs_reserve);
 
 $query_reserveCancel = "SELECT
     reserveID AS \"reserveID\",
-    room.roomName AS \"roomName\",
+    BUILDING.BUINAME || FLOOR.FLOORNAME||ROOMNAME AS \"roomName\",
     reservelWillDate AS \"reservelWillDate\",
-    duration.DurationStartTime || ' ' || duration.DurationEndTime AS \"timebetween\",
+    TO_CHAR(DURATIONSTARTTIME, 'HH24:MI:SS') || ' - ' || TO_CHAR(DURATIONENDTIME, 'HH24:MI:SS') AS \"timebetween\",
     reservelDetail AS \"reservelDetail\",
     status.staName AS \"statuscancle\",
     bookstatus.staName AS \"bookstatus\",
@@ -46,6 +48,8 @@ FROM reserveroom
     INNER JOIN status ON status.staID = reserveroom.reservel_staID
     INNER JOIN status bookstatus ON bookstatus.staID = reserveroom.reservel_BookingstatusID
     INNER JOIN reserveidtailcancel ON reserveroom.RESERVEID = reserveidtailcancel.RDC_RESERVEID
+    INNER JOIN FLOOR ON FLOOR.FLOORID = ROOM.ROOM_FLOORID
+    INNER JOIN BUILDING ON FLOOR.BUIID = BUILDING.BUIID
     WHERE reserveroom.reservel_BookingstatusID = 'STA0000008'
     AND reservel_empID = :emp_ID";
 $rs_reserveCancle = oci_parse($condb, $query_reserveCancel);
