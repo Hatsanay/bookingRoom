@@ -17,7 +17,7 @@ $query_reserve = "SELECT
     room.roomName AS \"roomName\",
     EMPLOYEE.EMPFNAME || ' ' || EMPLOYEE.EMPLNAME AS \"fullname\",
     reservelWillDate AS \"reservelWillDate\",
-    duration.DurationStartTime || ' ' || duration.DurationEndTime AS \"timebetween\",
+    TO_CHAR(DURATIONSTARTTIME, 'HH24:MI:SS') || ' - ' || TO_CHAR(DURATIONENDTIME, 'HH24:MI:SS') AS \"timebetween\",
     reservelDetail AS \"reservelDetail\",
     status.staName AS \"statuscancle\",
     bookstatus.staName AS \"bookstatus\"
@@ -27,7 +27,9 @@ FROM reserveroom
     INNER JOIN status ON status.staID = reserveroom.reservel_staID
     INNER JOIN status bookstatus ON bookstatus.staID = reserveroom.reservel_BookingstatusID
     INNER JOIN EMPLOYEE ON EMPLOYEE.EMPID = reserveroom.RESERVEL_EMPID
-    WHERE reserveroom.reservel_BookingstatusID = 'STA0000007'";
+    WHERE reserveroom.reservel_BookingstatusID = 'STA0000007'
+    ORDER BY reserveID ASC
+    ";
 $rs_reserve = oci_parse($condb, $query_reserve);
 // oci_bind_by_name($rs_reserve, ':emp_ID', $emp_ID);
 oci_execute($rs_reserve);
@@ -37,7 +39,7 @@ $query_reserveCancel = "SELECT
     room.roomName AS \"roomName\",
     EMPLOYEE.EMPFNAME || ' ' || EMPLOYEE.EMPLNAME AS \"fullname\",
     reservelWillDate AS \"reservelWillDate\",
-    duration.DurationStartTime || ' ' || duration.DurationEndTime AS \"timebetween\",
+    TO_CHAR(DURATIONSTARTTIME, 'HH24:MI:SS') || ' - ' || TO_CHAR(DURATIONENDTIME, 'HH24:MI:SS') AS \"timebetween\",
     reservelDetail AS \"reservelDetail\",
     status.staName AS \"statuscancle\",
     bookstatus.staName AS \"bookstatus\",
@@ -49,7 +51,9 @@ FROM reserveroom
     INNER JOIN status bookstatus ON bookstatus.staID = reserveroom.reservel_BookingstatusID
     INNER JOIN reserveidtailcancel ON reserveroom.RESERVEID = reserveidtailcancel.RDC_RESERVEID
     INNER JOIN EMPLOYEE ON EMPLOYEE.EMPID = reserveroom.RESERVEL_EMPID
-    WHERE reserveroom.reservel_BookingstatusID = 'STA0000008'";
+    WHERE reserveroom.reservel_BookingstatusID = 'STA0000008'
+    ORDER BY reserveID ASC
+    ";
 $rs_reserveCancle = oci_parse($condb, $query_reserveCancel);
 // oci_bind_by_name($rs_reserveCancle, ':emp_ID', $emp_ID);
 oci_execute($rs_reserveCancle);

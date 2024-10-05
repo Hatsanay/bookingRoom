@@ -46,7 +46,9 @@ $query_role = "SELECT
     roleName AS \"roleName\"
 FROM 
     role
-WHERE role_staID = 'STA0000003'";
+WHERE role_staID = 'STA0000003'
+ORDER BY roleID ASC
+";
 $rs_role = oci_parse($condb, $query_role);
 oci_execute($rs_role);
 
@@ -65,7 +67,9 @@ $query_roleEdit = "SELECT
     roleName AS \"roleName\"
 FROM 
     role
-WHERE role_staID = 'STA0000003'";
+WHERE role_staID = 'STA0000003'
+ORDER BY roleID
+";
 $rs_roleEdit = oci_parse($condb, $query_roleEdit);
 oci_execute($rs_roleEdit);
 
