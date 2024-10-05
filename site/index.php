@@ -28,7 +28,9 @@ FROM reserveroom
     INNER JOIN FLOOR ON FLOOR.FLOORID = ROOM.ROOM_FLOORID
     INNER JOIN BUILDING ON FLOOR.BUIID = BUILDING.BUIID
     WHERE reserveroom.reservel_BookingstatusID = 'STA0000007'
-    AND reservel_empID = :emp_ID";
+    AND reservel_empID = :emp_ID
+    ORDER BY reserveID ASC
+    ";
 $rs_reserve = oci_parse($condb, $query_reserve);
 oci_bind_by_name($rs_reserve, ':emp_ID', $emp_ID);
 oci_execute($rs_reserve);
@@ -51,7 +53,9 @@ FROM reserveroom
     INNER JOIN FLOOR ON FLOOR.FLOORID = ROOM.ROOM_FLOORID
     INNER JOIN BUILDING ON FLOOR.BUIID = BUILDING.BUIID
     WHERE reserveroom.reservel_BookingstatusID = 'STA0000008'
-    AND reservel_empID = :emp_ID";
+    AND reservel_empID = :emp_ID
+    ORDER BY reserveID ASC
+    ";
 $rs_reserveCancle = oci_parse($condb, $query_reserveCancel);
 oci_bind_by_name($rs_reserveCancle, ':emp_ID', $emp_ID);
 oci_execute($rs_reserveCancle);

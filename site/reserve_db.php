@@ -1,6 +1,119 @@
 <?php
 include('../condb.php');
 
+
+
+if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
+
+    $reserve_date = $_POST["reserve_date"];
+    $current_date = date('Y-m-d');
+
+    if (strtotime($reserve_date) < strtotime($current_date)) {
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'reserve.php?reserve_backdate=reserve_backdate'; ";
+        echo "</script>";
+        exit();
+    }
+
+    $reserve_duration = $_POST["reserve_duration"];
+    $room_id = $_POST["room_id"];
+    
+    $check_sql = "SELECT RESERVEID FROM RESERVEROOM 
+                  WHERE RESERVELWILLDATE = TO_DATE(:reserve_date, 'YYYY-MM-DD')
+                  AND RESERVEL_DURATIONID = :reserve_duration 
+                  AND RESERVEL_ROOMID = :room_id 
+                  AND RESERVEL_BOOKINGSTATUSID = 'STA0000007'";
+    
+    $check_stmt = oci_parse($condb, $check_sql);
+    oci_bind_by_name($check_stmt, ':reserve_date', $reserve_date);
+    oci_bind_by_name($check_stmt, ':reserve_duration', $reserve_duration);
+    oci_bind_by_name($check_stmt, ':room_id', $room_id);
+    oci_execute($check_stmt);
+
+    $row = oci_fetch_assoc($check_stmt);
+    
+    if ($row) {
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'reserve.php?reserve_havereserv=reserve_havereserv'; ";
+        echo "</script>";
+        exit();
+    }
+
+    $query_reservid = "SELECT RESERVEID FROM (SELECT RESERVEID FROM RESERVEROOM ORDER BY RESERVEID DESC) WHERE ROWNUM = 1";
+    $rs_id = oci_parse($condb, $query_reservid);
+    oci_execute($rs_id);
+    $row = oci_fetch_assoc($rs_id);
+
+    if ($row) {
+        $rs_id = $row['RESERVEID'];
+        $cha_ID = substr($rs_id, 0, 3);
+        $int_ID = substr($rs_id, 3);
+        $new_int_ID = str_pad((int)$int_ID + 1, 7, '0', STR_PAD_LEFT);
+        $reserv_ID = $cha_ID . $new_int_ID;
+    } else {
+        $reserv_ID = "RES0000001";
+    }
+
+    $reserve_roomdetail = $_POST["reserve_roomdetail"];
+    $reserve_QRcode = "567576576";
+    $empID = $_POST["empID"];
+    $reserve_type = $_POST["reserve_type"];
+    if($reserve_type == "VIP"){
+        $reserve_staid = "STA0000006";
+    } else {
+        $reserve_staid = "STA0000005";
+    }
+    $reserve_bookingsta = "STA0000007";
+    $sql = "INSERT INTO RESERVEROOM (
+        RESERVEID,
+        RESERVELWILLDATE,
+        RESERVELDETAIL,
+        RESERVELQRCODE,
+        RESERVEL_EMPID,
+        RESERVEL_DURATIONID,
+        RESERVEL_ROOMID,
+        RESERVEL_STAID,
+        RESERVEL_BOOKINGSTATUSID
+    ) VALUES (
+        :reserv_ID,
+        TO_DATE(:reserve_date, 'YYYY-MM-DD'),
+        :reserve_roomdetail,
+        :reserve_QRcode,
+        :empID,
+        :reserve_duration,
+        :room_id,
+        :reserve_staid,
+        :reserve_bookingsta
+    )";
+
+    $stmt = oci_parse($condb, $sql);
+    oci_bind_by_name($stmt, ':reserv_ID', $reserv_ID);
+    oci_bind_by_name($stmt, ':reserve_date', $reserve_date);
+    oci_bind_by_name($stmt, ':reserve_roomdetail', $reserve_roomdetail);
+    oci_bind_by_name($stmt, ':reserve_QRcode', $reserve_QRcode);
+    oci_bind_by_name($stmt, ':empID', $empID);
+    oci_bind_by_name($stmt, ':reserve_duration', $reserve_duration);
+    oci_bind_by_name($stmt, ':room_id', $room_id);
+    oci_bind_by_name($stmt, ':reserve_staid', $reserve_staid);
+    oci_bind_by_name($stmt, ':reserve_bookingsta', $reserve_bookingsta);
+
+    $result = oci_execute($stmt, OCI_NO_AUTO_COMMIT);
+
+    if ($result) {
+        oci_commit($condb);
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'reserve.php?reserve_add=reserve_add'; ";
+        echo "</script>";
+    } else {
+        $e = oci_error($stmt);
+        echo "<script type='text/javascript'>";
+        echo "alert('Error: " . htmlentities($e['message']) . "');";
+        echo "window.location = 'reserve.php?reserve_add_add_error=reserve_add_add_error'; ";
+        echo "</script>";
+    }
+}
+
+
 // ดึงข้อมูลชั้นจากตึกที่เลือก
 if (isset($_POST['building_id'])) {
     $building_id = $_POST['building_id'];
@@ -85,9 +198,13 @@ if (isset($_POST['room_id'])) {
 if (isset($_POST['room_id_room'])) {
     $room_id = $_POST['room_id_room'];
 
-    $query = "SELECT ROOMCAPACITY AS roomcapacity, ROOMDETAIL AS roomdetail, ROOMID AS ROOMID
-              FROM room
-              WHERE ROOMID = :room_id";
+    $query = "SELECT ROOMCAPACITY AS roomcapacity,
+        ROOMDETAIL AS roomdetail,
+        ROOMID AS ROOMID,
+        roomtypt.ROOMTYPNAME AS roomtype
+    FROM room
+        INNER JOIN roomtypt ON roomtypt.ROOMTYPTID  = room.ROOM_ROOMTYPTID
+    WHERE ROOMID = :room_id";
 
     $stmt = oci_parse($condb, $query);
     oci_bind_by_name($stmt, ':room_id', $room_id);
@@ -98,20 +215,13 @@ if (isset($_POST['room_id_room'])) {
         $room_details = [
             'roomcapacity' => $row['ROOMCAPACITY'],
             'roomid1' => $row['ROOMID'],
-            'roomdetail' => $row['ROOMDETAIL']  
+            'roomdetail' => $row['ROOMDETAIL'] ,
+            'roomtype' => $row['ROOMTYPE']
         ];
     }
     echo json_encode($room_details);
     exit;
 }
 
-if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
-    $empID = $_POST["empID"];
-    $reserve_date = $_POST["reserve_date"];
-    $reserve_date = $_POST["reserve_date"];
-    // $reserve_roomname = $_POST["reserve_roomname"];
-    $reserve_date = $_POST["reserve_date"];
-
-}
 
 ?>
