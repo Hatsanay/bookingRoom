@@ -55,7 +55,6 @@ if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
     }
 
     $reserve_roomdetail = $_POST["reserve_roomdetail"];
-    $reserve_QRcode = "567576576";
     $empID = $_POST["empID"];
     $reserve_type = $_POST["reserve_type"];
     if($reserve_type == "VIP"){
@@ -64,6 +63,8 @@ if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
         $reserve_staid = "STA0000005";
     }
     $reserve_bookingsta = "STA0000007";
+    $reserve_QRcode = $reserv_ID . $empID . $reserve_date . $reserve_duration . rand(10,100);
+
     $sql = "INSERT INTO RESERVEROOM (
         RESERVEID,
         RESERVELWILLDATE,
@@ -104,6 +105,7 @@ if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
         echo "<script type='text/javascript'>";
         echo "window.location = 'reserve.php?reserve_add=reserve_add'; ";
         echo "</script>";
+        
     } else {
         $e = oci_error($stmt);
         echo "<script type='text/javascript'>";
