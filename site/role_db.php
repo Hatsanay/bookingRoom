@@ -50,7 +50,7 @@ if (isset($_POST['role']) && $_POST['role'] == "add") {
         echo "</script>";
     } else {
         echo "<script type='text/javascript'>";
-        echo "window.location = 'role.php?mem_add_error=mem_add_error'; ";
+        echo "window.location = 'role.php?role_add_error=role_add_error'; ";
         echo "</script>";
     }
 }

@@ -233,7 +233,126 @@ $(function() {
 </script>
 <?php } ?>
 
+<?php if(isset($_GET['room_add'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'บันทึกข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'room.php';
+    }
+  });
+</script>
+<?php } ?>
 
+<?php if(isset($_GET['room_add_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่สามารถบันทึกข้อมูลได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'room.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['room_edit'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'แก้ไขข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'room.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['room_edit_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่สามารถแก้ไขข้อมูลได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'room.php';
+    }
+  });
+</script>
+<?php } ?>
+
+
+<?php if(isset($_GET['role_add'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'บันทึกข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'role.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['role_add_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่สามารถบันทึกข้อมูลได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'role.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['role_edit'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'แก้ไขข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'role.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['role_edit_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่สามารถแก้ไขข้อมูลได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'role.php';
+    }
+  });
+</script>
+<?php } ?>
 
 
 

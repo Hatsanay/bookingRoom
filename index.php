@@ -27,6 +27,13 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/5.11.3/main.min.js'></script> -->
 
 
+  <script src='/assets/fullcalendar/index.global.js'></script>
+    <script src='/assets/fullcalendar/index.global.min.js'></script>
+
+    <!-- รวม jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
   
 </head>
 <style>

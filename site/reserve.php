@@ -11,6 +11,8 @@ if (!$condb) {
     exit;
 }
 
+$emp_ID = $_SESSION['userEmpID'];
+
 $query_building = "SELECT BUIID AS buiID, BUINAME AS buiname FROM BUILDING";
 $rs_building = oci_parse($condb, $query_building);
 oci_execute($rs_building);
@@ -78,13 +80,16 @@ oci_execute($rs_duration);
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="reserveModalLabel">รายละเอียดการจอง</h5>
+                <h5 class="modal-title" id="reserveModalLabel">รายละเอียดการจอง </h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
                 <form id="reserveForm" action="" method="POST">
+                    <input type="hidden" name="reserve" value="add">
+                    <input type="hidden" name="empID" value="<?php echo $emp_ID ?>">
+
                     <div class="form-group">
                         <label for="reserve_date">วันที่จอง</label>
                         <input type="text" class="form-control" id="reserve_date" name="reserve_date" readonly>
@@ -250,11 +255,17 @@ $(document).ready(function() {
                             dateClick: function(info) {
                                 $('#reserveModal').modal('show');
                                 $('#reserve_date').val(info.dateStr);
+                                // $('#reserve_date').val(info.dateStr);
 
 
                                 var roomName = $(
                                     '#reserve_room option:selected').text();
                                 $('#reserve_roomname').val(roomName);
+
+                                // var roomid = $(
+                                //     '#reserve_room option:selected').text();
+                                // $('#reserve_room_id').val(roomid);
+
                             }
                         });
 
@@ -287,6 +298,7 @@ $(document).ready(function() {
                         response);
                     $('#reserve_roomcapacity').val(response.roomcapacity);
                     $('#reserve_roomdetail').val(response.roomdetail);
+                    // $('#reserve_room_id').val(response.room_id_room);
                 },
                 error: function(xhr, status, error) {
                     console.log("Error fetching room details: ", error);
