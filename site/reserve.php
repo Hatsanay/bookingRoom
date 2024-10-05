@@ -19,7 +19,8 @@ oci_execute($rs_building);
 
 $query_duration = "SELECT DURATIONID AS \"durationID\", 
 TO_CHAR(DURATIONSTARTTIME, 'HH24:MI:SS') || ' - ' || TO_CHAR(DURATIONENDTIME, 'HH24:MI:SS') AS \"startEndTime\" 
-FROM DURATION";
+FROM DURATION
+ORDER BY DURATIONID ASC";
 $rs_duration = oci_parse($condb, $query_duration);
 oci_execute($rs_duration);
 ?>
@@ -86,9 +87,10 @@ oci_execute($rs_duration);
                 </button>
             </div>
             <div class="modal-body">
-                <form id="reserveForm" action="" method="POST">
+                <form id="reserveForm" action="reserve_db.php" method="POST">
                     <input type="hidden" name="reserve" value="add">
                     <input type="hidden" name="empID" value="<?php echo $emp_ID ?>">
+                    <input type="hidden" class="form-control" id="room_id" name="room_id" readonly>
 
                     <div class="form-group">
                         <label for="reserve_date">วันที่จอง</label>
@@ -97,6 +99,10 @@ oci_execute($rs_duration);
                     <div class="form-group">
                         <label for="reserve_date">ห้อง</label>
                         <input type="text" class="form-control" id="reserve_roomname" name="reserve_roomname" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="reserve_date">ประเภทห้อง</label>
+                        <input type="text" class="form-control" id="reserve_type" name="reserve_type" readonly>
                     </div>
                     <div class="form-group">
                         <label for="reserve_date">ความจุห้อง</label>
@@ -110,8 +116,8 @@ oci_execute($rs_duration);
                             readonly></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="reserve_time">ช่วงเวลา</label>
-                        <select class="form-control select2" name="emp_role" id="emp_role" required>
+                        <label for="reserve_duration">ช่วงเวลา</label>
+                        <select class="form-control select2" name="reserve_duration" id="reserve_duration" required>
                             <option value="">เลือกช่วงเวลา</option>
                             <?php
                                     while ($row = oci_fetch_assoc($rs_duration)) {
@@ -262,9 +268,9 @@ $(document).ready(function() {
                                     '#reserve_room option:selected').text();
                                 $('#reserve_roomname').val(roomName);
 
-                                // var roomid = $(
-                                //     '#reserve_room option:selected').text();
-                                // $('#reserve_room_id').val(roomid);
+                                var roomID = $('#reserve_room option:selected')
+                                    .val();
+                                $('#room_id').val(roomID);
 
                             }
                         });
@@ -298,6 +304,7 @@ $(document).ready(function() {
                         response);
                     $('#reserve_roomcapacity').val(response.roomcapacity);
                     $('#reserve_roomdetail').val(response.roomdetail);
+                    $('#reserve_type').val(response.roomtype);
                     // $('#reserve_room_id').val(response.room_id_room);
                 },
                 error: function(xhr, status, error) {
@@ -329,6 +336,7 @@ $(document).ready(function() {
                 dateClick: function(info) {
                     $('#reserveModal').modal('show');
                     $('#reserve_date').val(info.dateStr);
+                    $('#room_id').val(roomID);
                 }
             });
 

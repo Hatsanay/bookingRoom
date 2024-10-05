@@ -356,8 +356,66 @@ $(function() {
 
 
 
+<?php if(isset($_GET['reserve_add'])){ ?>
+<script>
+  Swal.fire({
+  title: 'จองห้องประชุมสำเร็จ',
+  text: 'บันทึกข้อมูลการจองสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'reserve.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['reserve_add_add_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'จองห้องประชุมไม่สำเร็จ',
+  text: 'ไม่สามารถบันทึกข้อมูลการจองได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'reserve.php';
+    }
+  });
+</script>
+<?php } ?>
 
 
+<?php if(isset($_GET['reserve_havereserv'])){ ?>
+<script>
+  Swal.fire({
+  title: 'จองห้องประชุมไม่สำเร็จ',
+  text: 'มีการจองห้องประชุมนี้แล้ว โปรดเลือกช่วงเวลาอื่น',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'reserve.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['reserve_backdate'])){ ?>
+<script>
+  Swal.fire({
+  title: 'จองห้องประชุมไม่สำเร็จ',
+  text: 'ไม่สามารถจองย้อนหลังได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'reserve.php';
+    }
+  });
+</script>
+<?php } ?>
 
 
 
