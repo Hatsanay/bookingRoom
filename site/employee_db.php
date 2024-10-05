@@ -103,9 +103,14 @@ if (isset($_GET['id'])) {
     oci_execute($stmt);
     $row = oci_fetch_assoc($stmt);
 
-    echo json_encode($row);
+    if ($row) {
+        echo json_encode($row);  // ตรวจสอบว่าข้อมูลถูกดึงมาหรือไม่
+    } else {
+        echo json_encode(['error' => 'ไม่พบข้อมูล']);
+    }
     exit();
 }
+
 
 if (isset($_POST['employee']) && $_POST['employee'] == 'Edit') {
     $empID = $_POST['empID'];

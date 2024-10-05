@@ -181,7 +181,7 @@ oci_execute($rs_empView);
                         <div class="card-body table-responsive p-0">
                             <table id="example1" class="table table-head-fixed text-nowrap">
                                 <thead>
-                                    <tr class="danger">
+                                    <tr>
                                         <th>No.</th>
                                         <th>รหัสห้องประชุม</th>
                                         <th>ชื่อห้องประชุม</th>
@@ -192,16 +192,15 @@ oci_execute($rs_empView);
                                         <th>สถานะ</th>
                                         <th>เพิ่มเติม</th>
                                         <th>แก้ไข</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php 
-                                    $l = 0;
-                                    while ($row_room = oci_fetch_assoc($rs_room)) { 
+                                    <?php 
+                                        $l = 0;
+                                        while ($row_room = oci_fetch_assoc($rs_room)) { 
                                     ?>
-                                        <tr>
-                                        <td><?php echo @$l+=1; ?></td>
+                                    <tr>
+                                        <td><?php echo ++$l; ?></td>
                                         <td><?php echo $row_room['roomID']; ?></td>
                                         <td><?php echo $row_room['roomName']; ?></td>
                                         <td><?php echo $row_room['roomCapacity']; ?></td>
@@ -210,11 +209,9 @@ oci_execute($rs_empView);
                                         <td><?php echo $row_room['roomtype']; ?></td>
                                         <td><?php echo $row_room['staname']; ?></td>
                                         <td>
-                                        <td>
-                                            <button class="btn btn-info"
-                                                data-id="<?php echo $row_room['roomID']; ?>" data-toggle="modal"
-                                                data-target="#roomViewModal">
-                                                <i class="fas fas fa-eye"></i> เพิ่มเติม
+                                            <button class="btn btn-info" data-id="<?php echo $row_room['roomID']; ?>"
+                                                data-toggle="modal" data-target="#roomViewModal">
+                                                <i class="fas fa-eye"></i> เพิ่มเติม
                                             </button>
                                         </td>
                                         <td>
@@ -225,9 +222,10 @@ oci_execute($rs_empView);
                                             </button>
                                         </td>
                                     </tr>
-                                    <?php }?>
+                                    <?php } ?>
                                 </tbody>
                             </table>
+
                         </div>
                     </div>
                 </div>
@@ -238,8 +236,7 @@ oci_execute($rs_empView);
 </section>
 
 <!-- Modal สำหรับเพิ่มข้อมูลห้องประชุม -->
-<div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="roomModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="roomModal" tabindex="-1" role="dialog" aria-labelledby="roomModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <form action="room_db.php" method="POST" enctype="multipart/form-data">
 
@@ -256,16 +253,16 @@ oci_execute($rs_empView);
                 <div class="modal-body">
                     <div class="form-group row">
                         <label for="building" class="col-sm-2 col-form-label">ตึก</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" name="building" id="building" required>
-                                    <option value="">เลือกตึก</option>
-                                    <?php
+                        <div class="col-sm-10">
+                            <select class="form-control select2" name="building" id="building" required>
+                                <option value="">เลือกตึก</option>
+                                <?php
                                     while ($row = oci_fetch_assoc($rs_building)) {
                                         echo '<option value="' . $row['BuiID'] . '">' . $row['BuiName'] . '</option>';
                                     }
                                     ?>
-                                </select>
-                            </div>
+                            </select>
+                        </div>
                     </div>
                     <!-- ฟอร์มเลือกชั้น -->
                     <div class="form-group row">
@@ -275,20 +272,20 @@ oci_execute($rs_empView);
                                 <option value="">เลือกชั้น</option>
                             </select>
                         </div>
-                    </div>                   
+                    </div>
 
                     <div class="form-group row">
                         <label for="roomName" class="col-sm-2 col-form-label">ชื่อ</label>
                         <div class="col-sm-10">
-                            <input  name="roomName" type="text" required class="form-control" placeholder="ชื่อ"
-                                minlength="2" maxlength="2" pattern="\d{2}" title="กรุณากรอกตัวเลข 2 ตัว"/>
+                            <input name="roomName" type="text" required class="form-control" placeholder="ชื่อ"
+                                minlength="2" maxlength="2" pattern="\d{2}" title="กรุณากรอกตัวเลข 2 ตัว" />
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="roomCapacity" class="col-sm-2 col-form-label">ความจุ </label>
                         <div class="col-sm-10">
-                            <input name="roomCapacity"  type="text" required class="form-control" placeholder="ความจุ"
+                            <input name="roomCapacity" type="text" required class="form-control" placeholder="ความจุ"
                                 minlength="1" />
                         </div>
                     </div>
@@ -311,7 +308,7 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                     <div class="form-group row">
                         <label for="room_empID" class="col-sm-2 col-form-label">ผู้ดูแล</label>
                         <div class="col-sm-10">
@@ -324,7 +321,7 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
@@ -355,29 +352,29 @@ oci_execute($rs_empView);
                 <div class="modal-body">
                     <div class="form-group row">
                         <label for="building2" class="col-sm-2 col-form-label">ตึก</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" name="building2" id="building2" required disabled>
-                                    <option value="">เลือกตึก</option>
-                                    <?php
+                        <div class="col-sm-10">
+                            <select class="form-control select2" name="building2" id="building2" required disabled>
+                                <option value="">เลือกตึก</option>
+                                <?php
                                     while ($row = oci_fetch_assoc($rs_Editbuilding)) {
                                         echo '<option value="' . $row['BuiID'] . '">' . $row['BuiName'] . '</option>';
                                     }
                                     ?>
-                                </select>
-                            </div>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group row">
                         <label for="room_floor2" class="col-sm-2 col-form-label">ชั้น</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" name="room_floor2" id="room_floor2" required disabled>
-                                    <option value="">เลือกชั้น</option>
-                                    <?php
+                        <div class="col-sm-10">
+                            <select class="form-control select2" name="room_floor2" id="room_floor2" required disabled>
+                                <option value="">เลือกชั้น</option>
+                                <?php
                                     while ($row = oci_fetch_assoc($rs_floor)) {
                                         echo '<option value="' . $row['floorID'] . '">' . $row['floorName'] . '</option>';
                                     }
                                     ?>
-                                </select>
-                            </div>
+                            </select>
+                        </div>
                     </div>
                     <!-- ฟอร์มเลือกชั้น 
                     <div class="form-group row">
@@ -387,27 +384,28 @@ oci_execute($rs_empView);
                                 <option value="">เลือกชั้น</option>
                             </select>
                         </div>
-                    </div> -->                    
+                    </div> -->
                     <div class="form-group row">
                         <label for="roomName" class="col-sm-2 col-form-label">ชื่อ</label>
                         <div class="col-sm-10">
-                            <input  name="roomName" id="roomName" type="text" required class="form-control" placeholder="ชื่อ"
-                                minlength="2" maxlength="2" pattern="\d{2}" title="กรุณากรอกตัวเลข 2 ตัว"/>
+                            <input name="roomName" id="roomName" type="text" required class="form-control"
+                                placeholder="ชื่อ" minlength="2" maxlength="2" pattern="\d{2}"
+                                title="กรุณากรอกตัวเลข 2 ตัว" />
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="roomCapacity" class="col-sm-2 col-form-label">ความจุ </label>
                         <div class="col-sm-10">
-                            <input name="roomCapacity" id="roomCapacity" type="text" required class="form-control" placeholder="ความจุ"
-                                minlength="2" />
+                            <input name="roomCapacity" id="roomCapacity" type="text" required class="form-control"
+                                placeholder="ความจุ" minlength="2" />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="roomDetail" class="col-sm-2 col-form-label">รายละเอียด </label>
                         <div class="col-sm-10">
-                            <input name="roomDetail" id="roomDetail" type="text" required class="form-control" placeholder="รายละเอียด"
-                                minlength="3" />
+                            <input name="roomDetail" id="roomDetail" type="text" required class="form-control"
+                                placeholder="รายละเอียด" minlength="3" />
                         </div>
                     </div>
                     <div class="form-group row">
@@ -422,7 +420,7 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                     <div class="form-group row">
                         <label for="room_empID2" class="col-sm-2 col-form-label">ผู้ดูแล</label>
                         <div class="col-sm-10">
@@ -435,7 +433,7 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                     <div class="form-group row">
                         <label for="room_status2" class="col-sm-2 col-form-label">สถานะ</label>
                         <div class="col-sm-10">
@@ -448,7 +446,7 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
@@ -479,29 +477,29 @@ oci_execute($rs_empView);
                 <div class="modal-body">
                     <div class="form-group row">
                         <label for="building3" class="col-sm-2 col-form-label">ตึก</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" name="building3" id="building3" required disabled>
-                                    <option value="">เลือกตึก</option>
-                                    <?php
+                        <div class="col-sm-10">
+                            <select class="form-control select2" name="building3" id="building3" required disabled>
+                                <option value="">เลือกตึก</option>
+                                <?php
                                     while ($row = oci_fetch_assoc($rs_Viewbuilding)) {
                                         echo '<option value="' . $row['BuiID'] . '">' . $row['BuiName'] . '</option>';
                                     }
                                     ?>
-                                </select>
-                            </div>
+                            </select>
+                        </div>
                     </div>
                     <div class="form-group row">
                         <label for="room_floor3" class="col-sm-2 col-form-label">ชั้น</label>
-                            <div class="col-sm-10">
-                                <select class="form-control select2" name="room_floor3" id="room_floor3" required disabled>
-                                    <option value="">เลือกชั้น</option>
-                                    <?php
+                        <div class="col-sm-10">
+                            <select class="form-control select2" name="room_floor3" id="room_floor3" required disabled>
+                                <option value="">เลือกชั้น</option>
+                                <?php
                                     while ($row = oci_fetch_assoc($rs_floorView)) {
                                         echo '<option value="' . $row['floorID'] . '">' . $row['floorName'] . '</option>';
                                     }
                                     ?>
-                                </select>
-                            </div>
+                            </select>
+                        </div>
                     </div>
                     <!-- ฟอร์มเลือกชั้น 
                     <div class="form-group row">
@@ -511,33 +509,35 @@ oci_execute($rs_empView);
                                 <option value="">เลือกชั้น</option>
                             </select>
                         </div>
-                    </div> -->                    
+                    </div> -->
                     <div class="form-group row">
                         <label for="roomName3" class="col-sm-2 col-form-label">ชื่อ</label>
                         <div class="col-sm-10">
-                            <input  name="roomName3" id="roomName3" type="text" required class="form-control" placeholder="ชื่อ"
-                                minlength="2" maxlength="2" pattern="\d{2}" title="กรุณากรอกตัวเลข 2 ตัว" disabled/>
+                            <input name="roomName3" id="roomName3" type="text" required class="form-control"
+                                placeholder="ชื่อ" minlength="2" maxlength="2" pattern="\d{2}"
+                                title="กรุณากรอกตัวเลข 2 ตัว" disabled />
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label for="roomCapacity3" class="col-sm-2 col-form-label">ความจุ </label>
                         <div class="col-sm-10">
-                            <input name="roomCapacity3" id="roomCapacity3" type="text" required class="form-control" placeholder="ความจุ"
-                                minlength="2" disabled/>
+                            <input name="roomCapacity3" id="roomCapacity3" type="text" required class="form-control"
+                                placeholder="ความจุ" minlength="2" disabled />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="roomDetail3" class="col-sm-2 col-form-label">รายละเอียด </label>
                         <div class="col-sm-10">
-                            <input name="roomDetail3" id="roomDetail3" type="text" required class="form-control" placeholder="รายละเอียด"
-                                minlength="3" disabled/>
+                            <input name="roomDetail3" id="roomDetail3" type="text" required class="form-control"
+                                placeholder="รายละเอียด" minlength="3" disabled />
                         </div>
                     </div>
                     <div class="form-group row">
                         <label for="room_roomtypeID3" class="col-sm-2 col-form-label">ประเภท</label>
                         <div class="col-sm-10">
-                            <select class="form-control select2" name="room_roomtypeID3" id="room_roomtypeID3" required disabled>
+                            <select class="form-control select2" name="room_roomtypeID3" id="room_roomtypeID3" required
+                                disabled>
                                 <option value="">เลือกประเภท</option>
                                 <?php
                                     while ($row = oci_fetch_assoc($rs_typeView)) {
@@ -546,7 +546,7 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                     <div class="form-group row">
                         <label for="room_empID3" class="col-sm-2 col-form-label">ผู้ดูแล</label>
                         <div class="col-sm-10">
@@ -559,11 +559,12 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                     <div class="form-group row">
                         <label for="room_status3" class="col-sm-2 col-form-label">สถานะ</label>
                         <div class="col-sm-10">
-                            <select class="form-control select2" name="room_status3" id="room_status3" required disabled>
+                            <select class="form-control select2" name="room_status3" id="room_status3" required
+                                disabled>
                                 <option value="">เลือกสถานะห้อง</option>
                                 <?php
                                     while ($row = oci_fetch_assoc($rs_statusView)) {
@@ -572,11 +573,11 @@ oci_execute($rs_empView);
                                     ?>
                             </select>
                         </div>
-                    </div> 
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
-                    
+
                 </div>
             </div>
         </form>
@@ -587,27 +588,27 @@ oci_execute($rs_empView);
 <?php include('footer.php'); ?>
 
 <script>
-    $(document).ready(function() {
-        // ฟังก์ชันทำงานเมื่อโมดัลถูกปิด
-        $('#roomEditModal').on('hidden.bs.modal', function () {
-            // ล้างค่าใน input field ที่มี id เป็น roleID
-            $('#roomID').val();
-                $('#roomName').val('');
-                $('#roomCapacity').val('');
-                $('#roomDetail').val('');
-                $('#room_roomtypeID2').val('').trigger('change');
-                $('#room_empID2').val('').trigger('change');
-                $('#room_status2').val('').trigger('change');
-                $('#room_floor2').val('').trigger('change');
-                $('#building2').val('').trigger('change');  
-        });
+$(document).ready(function() {
+    // ฟังก์ชันทำงานเมื่อโมดัลถูกปิด
+    $('#roomEditModal').on('click','hidden.bs.modal', function() {
+        // ล้างค่าใน input field ที่มี id เป็น roleID
+        $('#roomID').val();
+        $('#roomName').val('');
+        $('#roomCapacity').val('');
+        $('#roomDetail').val('');
+        $('#room_roomtypeID2').val('').trigger('change');
+        $('#room_empID2').val('').trigger('change');
+        $('#room_status2').val('').trigger('change');
+        $('#room_floor2').val('').trigger('change');
+        $('#building2').val('').trigger('change');
     });
+});
 $(function() {
     $(".datatable").DataTable();
     $('#example2').DataTable({
         "paging": true,
-        "lengthChange": false,
-        "searching": false,
+        "lengthChange": true,
+        "searching": true,
         "ordering": true,
         "info": true,
         "autoWidth": false,
@@ -615,7 +616,7 @@ $(function() {
 });
 
 $(document).ready(function() {
-    $('.btn-edit').click(function() {
+    $(document).on('click', '.btn-edit', function() {
         var roomID = $(this).data('id');
         $.ajax({
             url: 'room_db.php',
@@ -634,14 +635,14 @@ $(document).ready(function() {
                 $('#room_empID2').val(roomData.room_empID).trigger('change');
                 $('#room_status2').val(roomData.room_staID).trigger('change');
                 $('#room_floor2').val(roomData.room_floorID).trigger('change');
-                $('#building2').val(roomData.BuiID).trigger('change');  
+                $('#building2').val(roomData.BuiID).trigger('change');
             }
         });
     });
 });
 
 $(document).ready(function() {
-    $('.btn-info').click(function() {
+    $(document).on('click', '.btn-info', function()  {
         var roomID = $(this).data('id');
         $.ajax({
             url: 'room_db.php',
@@ -687,7 +688,8 @@ $(document).ready(function() {
                 success: function(response) {
                     if (response.length > 0) {
                         $.each(response, function(index, floor) {
-                            $('#room_floor').append('<option value="' + floor.floorID + '">' + floor.floorName + '</option>');
+                            $('#room_floor').append('<option value="' + floor
+                                .floorID + '">' + floor.floorName + '</option>');
                         });
                     } else {
                         alert('ไม่พบข้อมูลชั้น');
@@ -700,6 +702,4 @@ $(document).ready(function() {
         }
     });
 });
-
-
 </script>

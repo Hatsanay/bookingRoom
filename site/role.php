@@ -418,7 +418,7 @@ oci_execute($rs_roleaccessEdit);
   <script>
   $(document).ready(function() {
         // ฟังก์ชันทำงานเมื่อโมดัลถูกปิด
-        $('#roleEditModal').on('hidden.bs.modal', function () {
+        $('#roleEditModal').on('click','hidden.bs.modal', function () {
             // ล้างค่าใน input field ที่มี id เป็น roleID
             $('#roleID').val('');
             $('#role_name').val('');  
@@ -447,7 +447,7 @@ oci_execute($rs_roleaccessEdit);
 });
 
 $(document).ready(function() {
-    $('.btn-edit').click(function() {
+    $(document).on('click', '.btn-edit', function() {
         var roleID = $(this).data('id');
 
         $.ajax({
@@ -516,7 +516,7 @@ $(document).ready(function() {
     });
 });
 $(document).ready(function() {
-    $('.btn-info').click(function() {
+    $(document).on('click', '.btn-info', function()  {
         var roleID = $(this).data('id');
 
         $.ajax({

@@ -119,21 +119,15 @@ oci_execute($rs_statusEdit);
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <?php 
+                                    <?php 
                                     $l = 0;
                                     while ($row_emp = oci_fetch_assoc($rs_emp)) { 
                                     ?>
-                                        <tr>
-                                        <td><?php echo @$l+=1; ?></td>
+                                    <tr>
+                                        <td><?php echo ++$l; ?></td>
                                         <td><?php echo $row_emp['empID']; ?></td>
                                         <td><?php echo $row_emp['fullname']; ?></td>
-                                        <td><?php
-                                        if($row_emp['empGender']=="M"){
-                                            echo "ชาย";
-                                        }else{
-                                            echo "หญิง";
-                                        }
-                                        ?></td>
+                                        <td><?php echo ($row_emp['empGender'] == 'M') ? 'ชาย' : 'หญิง'; ?></td>
                                         <td><?php echo $row_emp['age']; ?></td>
                                         <td><?php echo $row_emp['empPhone']; ?></td>
                                         <td><?php echo $row_emp['emprole']; ?></td>
@@ -146,8 +140,9 @@ oci_execute($rs_statusEdit);
                                             </button>
                                         </td>
                                     </tr>
-                                    <?php }?>
+                                    <?php } ?>
                                 </tbody>
+
                             </table>
                         </div>
                     </div>
@@ -179,7 +174,7 @@ oci_execute($rs_statusEdit);
                     <div class="form-group row">
                         <label for="emp_Fname" class="col-sm-2 col-form-label">ชื่อ </label>
                         <div class="col-sm-10">
-                            <input  name="emp_Fname" type="text" required class="form-control" placeholder="ชื่อ"
+                            <input name="emp_Fname" type="text" required class="form-control" placeholder="ชื่อ"
                                 minlength="3" />
                         </div>
                     </div>
@@ -295,8 +290,8 @@ oci_execute($rs_statusEdit);
                     <div class="form-group row">
                         <label for="emp_Password" class="col-sm-2 col-form-label">รหัสผ่าน</label>
                         <div class="col-sm-10 input-group">
-                            <input name="emp_Password" type="password" class="form-control"
-                                placeholder="รหัสผ่าน" minlength="3" id="emp_Password" disabled />
+                            <input name="emp_Password" type="password" class="form-control" placeholder="รหัสผ่าน"
+                                minlength="3" id="emp_Password" disabled />
                             <div class="input-group-append">
                                 <button type="button" class="btn btn-outline-secondary" id="togglePassword">
                                     <i class="fas fa-pencil-alt"></i>
@@ -408,30 +403,49 @@ document.getElementById('togglePassword').addEventListener('click', function(e) 
 
 $(function() {
     $(".datatable").DataTable();
+    // $('#example2').DataTable({
+    //     "paging": true,
+    //     "lengthChange": false,
+    //     "searching": false,
+    //     "ordering": true,
+    //     "info": true,
+    //     "autoWidth": false,
+    // });
+});
+$(document).ready(function() {
     $('#example2').DataTable({
         "paging": true,
-        "lengthChange": false,
-        "searching": false,
+        "lengthChange": true,
+        "searching": true,
         "ordering": true,
         "info": true,
         "autoWidth": false,
+        "pageLength": 10,
     });
 });
 
-$(document).ready(function() {
-    $('.btn-edit').click(function() {
-        var empID = $(this).data('id');
 
-        $.ajax({
-            url: 'employee_db.php',
-            type: 'GET',
-            data: {
-                id: empID
-            },
-            success: function(response) {
-                console.log(response);
-                var empData = JSON.parse(response);
 
+$(document).on('click', '.btn-edit', function() {
+    var empID = $(this).data('id');
+
+    // console.log("empID ที่ส่งไป: " + empID);
+
+    $.ajax({
+        url: 'employee_db.php',
+        type: 'GET',
+        data: {
+            id: empID
+        },
+        success: function(response) {
+            // console.log(response);
+
+            var empData = JSON.parse(response);
+
+            if (empData.error) {
+                alert(empData.error);
+            } else {
+                
                 $('#empID').val(empData.empID);
                 $('#emp_Fname').val(empData.empFname);
                 $('#emp_Lname').val(empData.empLname);
@@ -440,9 +454,9 @@ $(document).ready(function() {
                 $('#emp_department2').val(empData.emp_depID).trigger('change');
                 $('#emp_role2').val(empData.emp_roleID).trigger('change');
                 $('#emp_status2').val(empData.emp_stalD).trigger('change');
-                $('#emp_bDate2').val(empData.empBdate).trigger('change');
+                $('#emp_bDate2').val(empData.empBdate);
             }
-        });
+        }
     });
 });
 </script>
