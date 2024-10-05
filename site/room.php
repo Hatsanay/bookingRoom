@@ -288,7 +288,7 @@ oci_execute($rs_empView);
                     <div class="form-group row">
                         <label for="roomCapacity" class="col-sm-2 col-form-label">ความจุ </label>
                         <div class="col-sm-10">
-                            <input name="roomCapacity" type="text" required class="form-control" placeholder="ความจุ"
+                            <input name="roomCapacity"  type="text" required class="form-control" placeholder="ความจุ"
                                 minlength="1" />
                         </div>
                     </div>
@@ -653,9 +653,9 @@ $(document).ready(function() {
                 console.log(response);
                 var roomData = JSON.parse(response);
                 $('#roomID').val(roomData.roomID);
-                $('#roomName2').val(roomData.roomName);
-                $('#roomCapacity2').val(roomData.roomCapacity);
-                $('#roomDetail2').val(roomData.roomDetail);
+                $('#roomName3').val(roomData.roomName);
+                $('#roomCapacity3').val(roomData.roomCapacity);
+                $('#roomDetail3').val(roomData.roomDetail);
                 $('#room_roomtypeID3').val(roomData.room_roomtyptID).trigger('change');
                 $('#room_empID3').val(roomData.room_empID).trigger('change');
                 $('#room_status3').val(roomData.room_staID).trigger('change');

@@ -87,7 +87,7 @@ oci_execute($rs_duration);
             </div>
             <div class="modal-body">
                 <form id="reserveForm" action="" method="POST">
-                    
+                    <input type="hidden" name="reserve" value="add">
                     <input type="hidden" name="empID" value="<?php echo $emp_ID ?>">
 
                     <div class="form-group">
@@ -255,11 +255,17 @@ $(document).ready(function() {
                             dateClick: function(info) {
                                 $('#reserveModal').modal('show');
                                 $('#reserve_date').val(info.dateStr);
+                                // $('#reserve_date').val(info.dateStr);
 
 
                                 var roomName = $(
                                     '#reserve_room option:selected').text();
                                 $('#reserve_roomname').val(roomName);
+
+                                // var roomid = $(
+                                //     '#reserve_room option:selected').text();
+                                // $('#reserve_room_id').val(roomid);
+
                             }
                         });
 
@@ -292,6 +298,7 @@ $(document).ready(function() {
                         response);
                     $('#reserve_roomcapacity').val(response.roomcapacity);
                     $('#reserve_roomdetail').val(response.roomdetail);
+                    // $('#reserve_room_id').val(response.room_id_room);
                 },
                 error: function(xhr, status, error) {
                     console.log("Error fetching room details: ", error);

@@ -48,7 +48,7 @@ if (isset($_POST['room_id'])) {
 
     $query = "SELECT 
         reserveID AS reserveID, 
-        room.roomName AS roomName,
+        BUILDING.BUINAME || FLOOR.FLOORNAME||room.ROOMNAME  AS roomName,
         room.roomID AS roomID,
         TO_CHAR(reservelWillDate, 'YYYY-MM-DD') AS start_date, 
         TO_CHAR(duration.DurationStartTime, 'HH24:MI:SS') AS start_time, 
@@ -57,6 +57,8 @@ if (isset($_POST['room_id'])) {
     FROM reserveroom
     INNER JOIN room ON room.roomID = reserveroom.reservel_roomID
     INNER JOIN duration ON duration.durationID = reserveroom.reservel_durationID
+    INNER JOIN FLOOR ON FLOOR.FLOORID = ROOM.ROOM_FLOORID
+    INNER JOIN BUILDING ON FLOOR.BUIID = BUILDING.BUIID
     WHERE reserveroom.reservel_BookingstatusID = 'STA0000007'
     AND reserveroom.reservel_roomID = :room_id";
 
@@ -83,7 +85,7 @@ if (isset($_POST['room_id'])) {
 if (isset($_POST['room_id_room'])) {
     $room_id = $_POST['room_id_room'];
 
-    $query = "SELECT ROOMCAPACITY AS roomcapacity, ROOMDETAIL AS roomdetail
+    $query = "SELECT ROOMCAPACITY AS roomcapacity, ROOMDETAIL AS roomdetail, ROOMID AS ROOMID
               FROM room
               WHERE ROOMID = :room_id";
 
@@ -95,6 +97,7 @@ if (isset($_POST['room_id_room'])) {
     if ($row = oci_fetch_assoc($stmt)) {
         $room_details = [
             'roomcapacity' => $row['ROOMCAPACITY'],
+            'roomid1' => $row['ROOMID'],
             'roomdetail' => $row['ROOMDETAIL']  
         ];
     }
@@ -102,5 +105,13 @@ if (isset($_POST['room_id_room'])) {
     exit;
 }
 
+if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
+    $empID = $_POST["empID"];
+    $reserve_date = $_POST["reserve_date"];
+    $reserve_date = $_POST["reserve_date"];
+    // $reserve_roomname = $_POST["reserve_roomname"];
+    $reserve_date = $_POST["reserve_date"];
+
+}
 
 ?>
