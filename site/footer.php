@@ -421,6 +421,50 @@ $(function() {
 <?php } ?>
 
 
+<?php if(isset($_GET['access_add'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'บันทึกข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['access_add_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่สามารถบันทึกข้อมูลได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['access_can_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่มีสิทธิ์เข้าใช้ห้องนี้หรือข้อมูลไม่ถูกต้อง',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
 
 
 

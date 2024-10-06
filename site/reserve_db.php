@@ -63,7 +63,7 @@ if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
         $reserve_staid = "STA0000005";
     }
     $reserve_bookingsta = "STA0000007";
-    $reserve_QRcode = $reserv_ID . $empID . $reserve_date . $reserve_duration . rand(10,100);
+    $reserve_QRcode = $reserv_ID . $empID . $reserve_date . $reserve_duration;
 
     $sql = "INSERT INTO RESERVEROOM (
         RESERVEID,
