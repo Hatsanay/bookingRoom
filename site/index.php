@@ -103,8 +103,8 @@ oci_execute($rs_reserveCancle);
                 </button>
 
                 <a href="scanqrcode.php"><button class="btn btn-success" ?>
-                    <i class="fas fa-qrcode"></i> สแถน qrcode
-                </button></a>
+                        <i class="fas fa-qrcode"></i> สแถน qrcode
+                    </button></a>
             </h3>
         </div>
 
@@ -284,6 +284,7 @@ oci_execute($rs_reserveCancle);
                 <div id="qrcode" style="width:300px; height:300px; margin:auto;"></div>
             </div>
             <div class="modal-footer">
+                <button id="downloadQrcode" class="btn btn-primary">ดาวน์โหลด QR code</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">ปิด</button>
             </div>
         </div>
@@ -320,11 +321,23 @@ $(document).ready(function() {
         $('#qrcode').empty();
 
         var qrcode = new QRCode(document.getElementById("qrcode"), {
-            text: qrCodeData, 
+            text: qrCodeData,
             width: 300,
             height: 300
         });
+
+
+        $('#downloadQrcode').on('click', function() {
+            var canvas = $('#qrcode canvas')[0];
+            var imgData = canvas.toDataURL('image/png');
+
+            var downloadLink = document.createElement('a');
+            downloadLink.href = imgData;
+            downloadLink.download = reserveID+'_qrcode.png';
+            downloadLink.click();
+        });
     });
+
 
     $('form').on('submit', function(event) {
         console.log("Submitting form with reserveID: ", $('#reservID').val());
