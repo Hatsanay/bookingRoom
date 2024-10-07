@@ -101,7 +101,7 @@ FROM reserveroom
     INNER JOIN status bookstatus ON bookstatus.staID = reserveroom.reservel_BookingstatusID
     INNER JOIN FLOOR ON FLOOR.FLOORID = ROOM.ROOM_FLOORID
     INNER JOIN BUILDING ON FLOOR.BUIID = BUILDING.BUIID
-    WHERE reserveroom.reservel_BookingstatusID = 'STA0000011'
+    WHERE reserveroom.reservel_BookingstatusID = 'STA0000011' OR reserveroom.reservel_BookingstatusID = 'STA0000012'
     AND reservel_empID = :emp_ID
     ORDER BY reserveID ASC
     ";

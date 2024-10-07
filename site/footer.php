@@ -420,6 +420,21 @@ $(function() {
 </script>
 <?php } ?>
 
+<?php if(isset($_GET['reserve_locked'])){ ?>
+<script>
+  Swal.fire({
+  title: 'จองห้องประชุมไม่สำเร็จ',
+  text: 'คุณโดนล็อก โปรดติดต่อผู้ดูแลห้อง',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'reserve.php';
+    }
+  });
+</script>
+<?php } ?>
+
 
 <?php if(isset($_GET['access_add'])){ ?>
 <script>
