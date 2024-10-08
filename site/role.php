@@ -166,7 +166,13 @@ oci_execute($rs_roleaccessEdit);
                         </div>
                     </div>-->
                     <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="1" name ="indexchecked" >      
+                        <input class="form-check-input" type="checkbox" id="selectAll" onclick="toggleCheckboxes(this)">      
+                        <label class="form-check-label" for="selectAll">
+                            เลือกทั้งหมด / ยกเลิกทั้งหมด
+                        </label>
+                    </div>
+                    <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name="indexchecked" id="indexchecked" checked>      
                             <label class="form-check-label" for="indexchecked">
                                 รายการที่จอง
                             </label>
@@ -211,6 +217,12 @@ oci_execute($rs_roleaccessEdit);
                             <input class="form-check-input" type="checkbox" value="1" name ="roomchecked">
                             <label class="form-check-label" for="roomchecked">
                                 ห้องประชุม
+                            </label>
+                    </div>
+                    <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name ="reportchecked">
+                            <label class="form-check-label" for="reportchecked">
+                                รายงาน
                             </label>
                     </div>
                     </div>
@@ -260,6 +272,12 @@ oci_execute($rs_roleaccessEdit);
                         </div>
                     </div>
                     <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="selectAll" onclick="toggleCheckboxes(this)">      
+                        <label class="form-check-label" for="selectAll">
+                            เลือกทั้งหมด / ยกเลิกทั้งหมด
+                        </label>
+                    </div>
+                    <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="1" name="indexchecked" >
                         <label class="form-check-label" for="indexchecked">
                             รายการที่จอง
@@ -306,6 +324,12 @@ oci_execute($rs_roleaccessEdit);
                         <label class="form-check-label" for="roomchecked">
                             ห้องประชุม
                         </label>
+                    </div>
+                    <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name ="reportchecked">
+                            <label class="form-check-label" for="reportchecked">
+                                รายงาน
+                            </label>
                     </div>
 
                 </div>
@@ -404,6 +428,12 @@ oci_execute($rs_roleaccessEdit);
                             ห้องประชุม
                         </label>
                     </div>
+                    <div class="form-check">
+                            <input class="form-check-input" type="checkbox" value="1" name ="reportchecked" disabled>
+                            <label class="form-check-label" for="reportchecked">
+                                รายงาน
+                            </label>
+                    </div>
 
                 </div>
 
@@ -434,6 +464,7 @@ oci_execute($rs_roleaccessEdit);
                     $('input[name="employeechecked"]').prop('checked', false);
                     $('input[name="rolechecked"]').prop('checked', false);
                     $('input[name="roomchecked"]').prop('checked', false);
+                    $('input[name="reportchecked"]').prop('checked', false);
         });
     });
   $(function () {
@@ -513,6 +544,11 @@ $(document).ready(function() {
                 } else {
                     $('input[name="roomchecked"]').prop('checked', false);
                 }
+                if (roleAccessArray[8] == '1') {
+                    $('input[name="reportchecked"]').prop('checked', true);
+                } else {
+                    $('input[name="reportchecked"]').prop('checked', false);
+                }
             }
         });
     });
@@ -582,8 +618,22 @@ $(document).ready(function() {
                 } else {
                     $('input[name="roomchecked"]').prop('checked', false);
                 }
+                if (roleAccessArray[8] == '1') {
+                    $('input[name="reportchecked"]').prop('checked', true);
+                } else {
+                    $('input[name="reportchecked"]').prop('checked', false);
+                }
             }
         });
     });
 });
+function toggleCheckboxes(master) {
+    // Get all checkboxes with class 'form-check-input'
+    const checkboxes = document.querySelectorAll('.form-check-input');
+
+    // Set each checkbox's checked status based on the master checkbox
+    checkboxes.forEach(function(checkbox) {
+        checkbox.checked = master.checked;
+    });
+}
   </script>

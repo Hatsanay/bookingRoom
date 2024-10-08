@@ -1,15 +1,10 @@
 <?php 
-$active = "approve";
+$active = "report";
 include("header.php");
 if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
  
-if (substr($permistion, 2, 1) != "1") {
-  session_destroy();
-  header("Location: ../logout.php");
-  exit();
-}
 
 ?>
 
@@ -19,7 +14,7 @@ if (substr($permistion, 2, 1) != "1") {
 
   <div class="card card-primary">
       <div class="card-header ">
-        <h3 class="card-title">อนุมัติการจอง</h3>
+        <h3 class="card-title">รายงานการใช้งานห้อง Meeting</h3>
       </div>  
 
       <div class="card-body">

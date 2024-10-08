@@ -5,6 +5,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+if (substr($permistion, 1, 1) != "1") {
+    session_destroy();
+    header("Location: ../logout.php");
+    exit();
+}
+
 if (!$condb) {
     $e = oci_error();
     echo "Failed to connect to Oracle database";

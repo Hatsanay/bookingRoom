@@ -22,6 +22,19 @@ if (isset($_POST['role']) && $_POST['role'] == "add") {
     $role_name = $_POST["role_name"];
     $role_staID = "STA0000003"; // สถานะ
     
+    $check_query = "SELECT COUNT(*) AS ROLECOUNT FROM role WHERE roleName = :role_name";
+    $stmt_check = oci_parse($condb, $check_query);
+    oci_bind_by_name($stmt_check, ':role_name', $role_name);
+    oci_execute($stmt_check);
+    $row_check = oci_fetch_assoc($stmt_check);
+
+    if ($row_check['ROLECOUNT'] > 0) {
+        // ถ้า roleName ซ้ำ
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'role.php?role_add_error=role_add_error'; ";
+        echo "</script>";
+    } else {
+
     $role_access1 = !empty($_POST["indexchecked"]) ? $_POST["indexchecked"] : '0';
     $role_access2 = !empty($_POST["reservechecked"]) ? $_POST["reservechecked"] : '0';
     $role_access3 = !empty($_POST["approvechecked"]) ? $_POST["approvechecked"] : '0';
@@ -30,12 +43,18 @@ if (isset($_POST['role']) && $_POST['role'] == "add") {
     $role_access6 = !empty($_POST["employeechecked"]) ? $_POST["employeechecked"] : '0';
     $role_access7 = !empty($_POST["rolechecked"]) ? $_POST["rolechecked"] : '0';
     $role_access8 = !empty($_POST["roomchecked"]) ? $_POST["roomchecked"] : '0';
+    $role_access9 = !empty($_POST["reportchecked"]) ? $_POST["reportchecked"] : '0';
 
     // รวมค่าทั้งหมดเข้าด้วยกัน
     $role_access = $role_access1 . $role_access2 . $role_access3 . 
                    $role_access4 . $role_access5 . $role_access6 . 
-                   $role_access7 . $role_access8;
+                   $role_access7 . $role_access8 . $role_access9;
 
+   if ($role_access === '000000000') {
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'role.php?role_add_error=role_add_error'; ";
+        echo "</script>";
+        } else {             
     // สร้างคำสั่ง SQL สำหรับ Oracle
     $sql = "INSERT INTO role (roleID, roleName, roleaccess, role_staID)
             VALUES ('$role_ID', '$role_name', '$role_access', '$role_staID')";
@@ -53,6 +72,8 @@ if (isset($_POST['role']) && $_POST['role'] == "add") {
         echo "window.location = 'role.php?role_add_error=role_add_error'; ";
         echo "</script>";
     }
+}
+}
 }
 if (isset($_GET['id'])) {
     $roleID = $_GET['id'];
@@ -74,6 +95,18 @@ if (isset($_POST['role']) && $_POST['role'] == 'Edit') {
     //$roleaccess = $_POST['role_access2'];
     $role_staID = $_POST['role_status2'];
 
+    $check_query = "SELECT COUNT(*) AS ROLECOUNT FROM role WHERE roleName = :role_name";
+    $stmt_check = oci_parse($condb, $check_query);
+    oci_bind_by_name($stmt_check, ':role_name', $role_name);
+    oci_execute($stmt_check);
+    $row_check = oci_fetch_assoc($stmt_check);
+
+    if ($row_check['ROLECOUNT'] > 0) {
+        // ถ้า roleName ซ้ำ
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'role.php?role_addSame_error=duplicate_role'; ";
+        echo "</script>";
+    }else{
     $role_access1 = !empty($_POST["indexchecked"]) ? $_POST["indexchecked"] : '0';
     $role_access2 = !empty($_POST["reservechecked"]) ? $_POST["reservechecked"] : '0';
     $role_access3 = !empty($_POST["approvechecked"]) ? $_POST["approvechecked"] : '0';
@@ -82,12 +115,18 @@ if (isset($_POST['role']) && $_POST['role'] == 'Edit') {
     $role_access6 = !empty($_POST["employeechecked"]) ? $_POST["employeechecked"] : '0';
     $role_access7 = !empty($_POST["rolechecked"]) ? $_POST["rolechecked"] : '0';
     $role_access8 = !empty($_POST["roomchecked"]) ? $_POST["roomchecked"] : '0';
+    $role_access9 = !empty($_POST["reportchecked"]) ? $_POST["reportchecked"] : '0';
 
     // รวมค่าทั้งหมดเข้าด้วยกัน
     $role_access = $role_access1 . $role_access2 . $role_access3 . 
                    $role_access4 . $role_access5 . $role_access6 . 
-                   $role_access7 . $role_access8;
+                   $role_access7 . $role_access8 . $role_access9;
 
+    if ($role_access === '00000000') {
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'role.php?role_addNoaccess_error=no_access'; ";
+        echo "</script>";
+        }  else{ 
 
     $query = "UPDATE role 
             SET rolename = :rolename, roleaccess = :roleaccess, role_staID = :role_staID
@@ -115,5 +154,7 @@ if (isset($_POST['role']) && $_POST['role'] == 'Edit') {
         echo "window.location = 'role.php?role_edit_error=role_edit_error'; ";
         echo "</script>";
     }
+}
+}
 }
 ?>

@@ -25,6 +25,27 @@ if (isset($_POST['room']) && $_POST['room'] == "add") {
     $room_roomtypeID = $_POST["room_roomtypeID"];
     $room_status = "STA0000003";
     $room_empID = $_POST["room_empID"];
+    $buildingID = $_POST["building"];
+
+    $check_query = "SELECT COUNT(*) AS ROOMCOUNT 
+    FROM ROOM ,building
+    WHERE roomName = :roomName 
+    AND room_floorID = :room_floor 
+    AND BuiID = :buildingID";
+
+    $stmt_check = oci_parse($condb, $check_query);
+    oci_bind_by_name($stmt_check, ':roomName', $roomName);
+    oci_bind_by_name($stmt_check, ':room_floor', $room_floor);
+    oci_bind_by_name($stmt_check, ':buildingID', $buildingID);
+    oci_execute($stmt_check);
+    $row_check = oci_fetch_assoc($stmt_check);
+
+    if ($row_check['ROOMCOUNT'] > 0) {
+        // ถ้าพบว่ามีห้องซ้ำ
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'room.php?room_add_error=room_add_error';";
+        echo "</script>";
+    } else {
     // SQL สำหรับเพิ่มห้องใหม่
     $sql = "INSERT INTO ROOM (
         roomID,
@@ -69,6 +90,7 @@ if (isset($_POST['room']) && $_POST['room'] == "add") {
         echo "alert('Error: " . htmlentities($e['message']) . "');";
         echo "window.location = 'room.php?room_add_error=room_add_error'; ";
         echo "</script>";
+    }
     }
 }
 
@@ -128,7 +150,27 @@ if (isset($_POST['room']) && $_POST['room'] == 'Edit') {
     $room_roomtypeID = $_POST["room_roomtypeID2"];
     $room_status = $_POST["room_status2"];;
     $room_empID = $_POST["room_empID2"];
+    $buildingID = $_POST["building2"];
 
+    $check_query = "SELECT COUNT(*) AS ROOMCOUNT 
+    FROM ROOM ,building
+    WHERE roomName = :roomName 
+    AND room_floorID = :room_floor 
+    AND BuiID = :buildingID";
+
+    $stmt_check = oci_parse($condb, $check_query);
+    oci_bind_by_name($stmt_check, ':roomName', $roomName);
+    oci_bind_by_name($stmt_check, ':room_floor', $room_floor);
+    oci_bind_by_name($stmt_check, ':buildingID', $buildingID);
+    oci_execute($stmt_check);
+    $row_check = oci_fetch_assoc($stmt_check);
+
+    if ($row_check['ROOMCOUNT'] > 0) {
+        // ถ้าพบว่ามีห้องซ้ำ
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'room.php?room_add_error=room_add_error';";
+        echo "</script>";
+    }else{
 
     $query = "UPDATE ROOM 
     SET
@@ -167,5 +209,6 @@ if (isset($_POST['room']) && $_POST['room'] == 'Edit') {
         echo "window.location = 'room.php?room_edit_error=room_edit_error'; ";
         echo "</script>";
     }
+}
 }
 ?>
