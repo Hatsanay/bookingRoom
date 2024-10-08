@@ -140,7 +140,7 @@ $permistion = $_SESSION['userRoleaccess'];
           <li class="nav-item">
             <a href="report.php" class="nav-link <?php if($active=="report"){echo "active";} ?> ">
               <i class="nav-icon fa fa-users"></i>
-              <p>รายงาน</p>
+              <p>รายงานทั้งหมด</p>
             </a>
           </li>
         <?php }?>
