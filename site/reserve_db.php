@@ -1,13 +1,12 @@
 <?php
 include('../condb.php');
 
-
-
 if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
-
+    $empID = $_POST["empID"];
     $reserve_date = $_POST["reserve_date"];
     $current_date = date('Y-m-d');
 
+    
     if (strtotime($reserve_date) < strtotime($current_date)) {
         echo "<script type='text/javascript'>";
         echo "window.location = 'reserve.php?reserve_backdate=reserve_backdate'; ";
@@ -15,6 +14,21 @@ if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
         exit();
     }
 
+    
+    $check_lock_sql = "SELECT EMPID FROM EMPLOYEE WHERE EMPID = :empID AND EMPCOUNTLOCK >= 3";
+    $check_lock_stmt = oci_parse($condb, $check_lock_sql);
+    oci_bind_by_name($check_lock_stmt, ':empID', $empID);
+    oci_execute($check_lock_stmt);
+
+    if ($lock_row = oci_fetch_assoc($check_lock_stmt)) {
+        
+        echo "<script type='text/javascript'>";
+        echo "window.location = 'reserve.php?reserve_locked=reserve_locked'; ";
+        echo "</script>";
+        exit();
+    }
+
+    
     $reserve_duration = $_POST["reserve_duration"];
     $room_id = $_POST["room_id"];
     
@@ -39,6 +53,7 @@ if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
         exit();
     }
 
+    
     $query_reservid = "SELECT RESERVEID FROM (SELECT RESERVEID FROM RESERVEROOM ORDER BY RESERVEID DESC) WHERE ROWNUM = 1";
     $rs_id = oci_parse($condb, $query_reservid);
     oci_execute($rs_id);
@@ -54,16 +69,18 @@ if (isset($_POST['reserve']) && $_POST['reserve'] == "add") {
         $reserv_ID = "RES0000001";
     }
 
+    
     $reserve_roomdetail = $_POST["reserve_roomdetail"];
-    $reserve_QRcode = "567576576";
-    $empID = $_POST["empID"];
     $reserve_type = $_POST["reserve_type"];
-    if($reserve_type == "VIP"){
+    if ($reserve_type == "VIP") {
         $reserve_staid = "STA0000006";
     } else {
         $reserve_staid = "STA0000005";
     }
     $reserve_bookingsta = "STA0000007";
+    $reserve_QRcode = $reserv_ID . $empID . $reserve_date . $reserve_duration;
+
+    
     $sql = "INSERT INTO RESERVEROOM (
         RESERVEID,
         RESERVELWILLDATE,

@@ -4,7 +4,7 @@ include("header.php");
 if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
-if (substr($permistion, 0, 1) != "1") {
+if (substr($permistion, 4, 1) != "1") {
     session_destroy();
     header("Location: ../logout.php");
     exit();

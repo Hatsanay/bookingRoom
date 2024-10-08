@@ -42,6 +42,9 @@
 <script src="../assets/adminlte.min.js"></script>
 <script src="../assets/demo.js"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+
 
 
 
@@ -417,7 +420,66 @@ $(function() {
 </script>
 <?php } ?>
 
+<?php if(isset($_GET['reserve_locked'])){ ?>
+<script>
+  Swal.fire({
+  title: 'จองห้องประชุมไม่สำเร็จ',
+  text: 'คุณโดนล็อก โปรดติดต่อเจ้าหน้าที่',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'reserve.php';
+    }
+  });
+</script>
+<?php } ?>
 
+
+<?php if(isset($_GET['access_add'])){ ?>
+<script>
+  Swal.fire({
+  title: 'สำเร็จ',
+  text: 'บันทึกข้อมูลสำเร็จ',
+  icon: 'success',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['access_add_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่สามารถบันทึกข้อมูลได้',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
+
+<?php if(isset($_GET['access_can_error'])){ ?>
+<script>
+  Swal.fire({
+  title: 'ไม่สำเร็จ',
+  text: 'ไม่มีสิทธิ์เข้าใช้ห้องนี้หรือข้อมูลไม่ถูกต้อง',
+  icon: 'error',
+  confirmButtonText: 'ตกลง'
+}).then((result) => {
+    if (result.isConfirmed) {
+      window.location = 'index.php';
+    }
+  });
+</script>
+<?php } ?>
 
 
 

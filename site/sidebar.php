@@ -128,6 +128,24 @@ $permistion = $_SESSION['userRoleaccess'];
 
         </ul>
         <hr>
+
+        
+        <?php }?>
+
+        <?php if(substr($permistion,8,1)== "1"){?> <!-- bitที่ 5 6 7 -->
+        <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">
+   
+          <li class="nav-header">รายงาน</li>
+          <?php if(substr($permistion,8,1)== "1"){?> <!-- bitที่5 -->
+          <li class="nav-item">
+            <a href="report.php" class="nav-link <?php if($active=="report"){echo "active";} ?> ">
+              <i class="nav-icon fa fa-users"></i>
+              <p>รายงาน</p>
+            </a>
+          </li>
+        <?php }?>
+        </ul>
+        <hr>
         <?php }?>
 
 <ul class="nav nav-pills nav-sidebar nav-child-indent flex-column" data-widget="treeview" role="menu" data-accordion="false">

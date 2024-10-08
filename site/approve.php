@@ -5,6 +5,11 @@ if (session_status() == PHP_SESSION_NONE) {
   session_start();
 }
  
+if (substr($permistion, 2, 1) != "1") {
+  session_destroy();
+  header("Location: ../logout.php");
+  exit();
+}
 
 ?>
 
