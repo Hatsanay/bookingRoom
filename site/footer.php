@@ -424,7 +424,7 @@ $(function() {
 <script>
   Swal.fire({
   title: 'จองห้องประชุมไม่สำเร็จ',
-  text: 'คุณโดนล็อก โปรดติดต่อผู้ดูแลห้อง',
+  text: 'คุณโดนล็อก โปรดติดต่อเจ้าหน้าที่',
   icon: 'error',
   confirmButtonText: 'ตกลง'
 }).then((result) => {

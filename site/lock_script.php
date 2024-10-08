@@ -1,14 +1,21 @@
 <?php
 include('../condb.php');
 
+// ตรวจสอบว่ามีการเชื่อมต่อฐานข้อมูลสำเร็จหรือไม่
+if (!$condb) {
+    die("Connection failed: " . oci_error());
+}
 
-$query = "SELECT EMPLOYEE.EMPID, EMPLOYEE.EMPCOUNTLOCK, RESERVEROOM.RESERVEID, RESERVEROOM.RESERVELWILLDATE, DURATION.DURATIONENDTIME
+// ดึงข้อมูลพนักงานที่ไม่มาใช้งานตามเงื่อนไขที่กำหนด โดยดึงเฉพาะเวลาจาก DURATIONENDTIME ที่หมดเวลาแล้วเท่านั้น
+$query = "SELECT EMPLOYEE.EMPID, EMPLOYEE.EMPCOUNTLOCK, RESERVEROOM.RESERVEID, 
+                 RESERVEROOM.RESERVELWILLDATE, 
+                 TO_CHAR(DURATION.DURATIONENDTIME, 'HH24:MI:SS') AS DURATIONENDTIME
           FROM EMPLOYEE
           INNER JOIN RESERVEROOM ON EMPLOYEE.EMPID = RESERVEROOM.RESERVEL_EMPID
           INNER JOIN DURATION ON RESERVEROOM.RESERVEL_DURATIONID = DURATION.DURATIONID
-          WHERE DURATION.DURATIONENDTIME < SYSDATE
+          WHERE RESERVEROOM.RESERVEL_BOOKINGSTATUSID = 'STA0000007'
           AND TRUNC(RESERVEROOM.RESERVELWILLDATE) <= TRUNC(SYSDATE)
-          AND RESERVEROOM.RESERVEL_BOOKINGSTATUSID = 'STA0000007'";
+          AND TO_DATE(RESERVEROOM.RESERVELWILLDATE || ' ' || TO_CHAR(DURATION.DURATIONENDTIME, 'HH24:MI:SS'), 'DD-MM-YYYY HH24:MI:SS') < SYSDATE";
 
 $result = oci_parse($condb, $query);
 if (!oci_execute($result)) {
@@ -16,23 +23,24 @@ if (!oci_execute($result)) {
     die("Error executing query: " . $e['message']);
 }
 
-
 while ($row = oci_fetch_assoc($result)) {
     $empID = $row['EMPID'];
     $currentLockCount = $row['EMPCOUNTLOCK'];
     $reserveID = $row['RESERVEID'];
     $willDate = $row['RESERVELWILLDATE'];
-    $durationEndTime = $row['DURATIONENDTIME'];
+    $durationEndTime = $row['DURATIONENDTIME']; // เวลาสิ้นสุดในรูปแบบ 'HH24:MI:SS'
 
+    // สร้างเวลาสิ้นสุดการจองเป็น timestamp โดยรวมวันที่จาก willDate กับเวลาจาก durationEndTime
+    $durationEndTimeUnix = strtotime($willDate . ' ' . $durationEndTime); 
+    $currentTime = time();
 
-    if (strtotime($durationEndTime) < time() && strtotime($willDate) <= strtotime(date('Y-m-d'))) {
+    // ตรวจสอบเฉพาะรายการที่เวลาสิ้นสุดการจองอยู่ในอดีต (เวลาปัจจุบันเกินจากเวลาสิ้นสุดการจอง)
+    if ($durationEndTimeUnix < $currentTime) {
         // เพิ่มจำนวนครั้งที่ไม่มาใช้งาน
         $currentLockCount++;
 
         // อัปเดต EMPCOUNTLOCK ใน EMPLOYEE
-        $updateQuery = "UPDATE EMPLOYEE
-                        SET EMPCOUNTLOCK = :currentLockCount
-                        WHERE EMPID = :empID";
+        $updateQuery = "UPDATE EMPLOYEE SET EMPCOUNTLOCK = :currentLockCount WHERE EMPID = :empID";
         $updateStmt = oci_parse($condb, $updateQuery);
         oci_bind_by_name($updateStmt, ':currentLockCount', $currentLockCount);
         oci_bind_by_name($updateStmt, ':empID', $empID);
@@ -71,10 +79,10 @@ while ($row = oci_fetch_assoc($result)) {
                 $new_int_ID = str_pad((int)$int_ID + 1, 6, '0', STR_PAD_LEFT);
                 $lockID = $cha_ID . $new_int_ID;
             } else {
-                $lockID = "LOCK0001";
+                $lockID = "LOCK000001";
             }
 
-            // อัปเดตสถานะล็อกใน LOCK_TABLE
+            // บันทึกข้อมูลล็อกใน LOCK_TABLE
             $lockDate = date('d-m-Y');
             $lockStatus = 'STA0000009';
 
