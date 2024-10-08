@@ -93,7 +93,7 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                   <?php
                                   if ($selected_room) {
                                       $query = "
-                                      SELECT 
+                                      SELECT
                                       TO_CHAR(RESERVELWILLDATE, 'DD-MM-YYYY') AS DAY, 
                                       COUNT(*) AS TOTAL_BOOKINGS,
                                       SUM(CASE WHEN RESERVEL_BOOKINGSTATUSID = 'STA0000007' THEN 1 ELSE 0 END) AS TOTAL_USAGE,
@@ -102,7 +102,7 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                       RESERVEROOM
                                   WHERE 
                                       TO_CHAR(RESERVELWILLDATE, 'MM-YYYY') = :selected_month
-                                      AND ROOM_ID = :selected_room  -- เปลี่ยนตามชื่อคอลัมน์จริงในฐานข้อมูล
+                                      AND RESERVEL_ROOMID = :selected_room  -- เปลี่ยนตามชื่อคอลัมน์จริงในฐานข้อมูล
                                   GROUP BY 
                                       TO_CHAR(RESERVELWILLDATE, 'DD-MM-YYYY')
                                   ORDER BY 
