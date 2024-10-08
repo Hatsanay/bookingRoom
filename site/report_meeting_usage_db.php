@@ -23,9 +23,7 @@ if (isset($_POST['building_id'])) {
 // ดึงข้อมูลห้องจากชั้นที่เลือก
 if (isset($_POST['floor_id'])) {
     $floor_id = $_POST['floor_id'];
-    $query = "SELECT ROOMID AS roomID, 
-    BuiName ||  floorName  || roomName AS roomName 
-    FROM ROOM
+    $query = "SELECT ROOMID AS roomID, BuiName ||  floorName  || roomName AS roomName FROM ROOM 
     INNER JOIN floor ON room.room_floorID = floor.floorID
     INNER JOIN building ON floor.BuiID = building.BuiID
     WHERE ROOM_FLOORID = :floor_id";
