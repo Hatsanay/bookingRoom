@@ -9,7 +9,6 @@ $query_building = "SELECT BUIID AS buiID, BUINAME AS buiname FROM BUILDING";
 $rs_building = oci_parse($condb, $query_building);
 oci_execute($rs_building);
 
-// ตรวจสอบว่ามีการส่งข้อมูล POST มาหรือไม่
 $selected_month = isset($_POST['selected_month']) ? date('m-Y', strtotime($_POST['selected_month'])) : date('m-Y');
 $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
 
@@ -27,7 +26,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
             <div class="container-fluid">
                 <form method="POST" action="">
                     <div class="row">
-                        <!-- เลือกเดือน -->
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="selected_month">เลือกเดือน:</label>
@@ -37,7 +35,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                             </div>
                         </div>
 
-                        <!-- เลือกตึก -->
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="selected_building">ตึก:</label>
@@ -51,7 +48,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                 </select>
                             </div>
                         </div>
-                        <!-- เลือกชั้น -->
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="selected_floor">ชั้น:</label>
@@ -60,7 +56,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                 </select>
                             </div>
                         </div>
-                        <!-- เลือกห้องประชุม -->
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label for="selected_room">เลือกห้องประชุม</label>
@@ -69,7 +64,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                 </select>
                             </div>
                         </div>
-                        <!-- ปุ่มค้นหา -->
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>&nbsp;</label>
@@ -128,7 +122,7 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                             echo "</tr>";
                                         }
                                     } else {
-                                        echo "<tr><td colspan='4'>ไม่มีข้อมูลสำหรับเดือนและห้องที่เลือก</td></tr>";
+                                        echo "<tr><td colspan='5'>ไม่มีข้อมูลสำหรับเดือนและห้องที่เลือก</td></tr>";
                                     }
                                     ?>
                                 </tbody>
