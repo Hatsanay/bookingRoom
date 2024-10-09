@@ -204,7 +204,6 @@ oci_execute($rs_emplockHistory);
                                                 <td><?php echo ++$l; ?></td>
                                                 <td><?php echo $row_emplockHistory['lockID']; ?></td>
                                                 <td><?php echo $row_emplockHistory['fullname']; ?></td>
-                                                <td><?php echo $row_emplockHistory['fullname']; ?></td>
                                                 <td>
                                                   <?php
                                                     if($row_emplockHistory['empGender']=="M"){
