@@ -73,8 +73,18 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                     </div>
                 </form>
 
-                <div class="row">
-                    <div class="col-md-12">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="true">ตาราง</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">กราฟ</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="myTabContent">
+                    <!-- ตารางข้อมูล -->
+                    <div class="tab-pane fade show active" id="table" role="tabpanel" aria-labelledby="table-tab">
                         <div class="card-body table-responsive p-0">
                             <table class="table table-bordered table-striped datatable">
                                 <thead>
@@ -88,6 +98,7 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                 </thead>
                                 <tbody>
                                     <?php
+                                    $chartData = []; // สำหรับจัดเก็บข้อมูลสำหรับกราฟ
                                     if ($selected_room) {
                                         $query = "
                                         SELECT
@@ -120,6 +131,14 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                             echo "<td>{$row['TOTAL_USAGE']}</td>";
                                             echo "<td>{$row['TOTAL_NO_SHOW']}</td>";
                                             echo "</tr>";
+
+                                            // เก็บข้อมูลสำหรับกราฟ
+                                            $chartData[] = [
+                                                'day' => $row['DAY'],
+                                                'total_bookings' => (int)$row['TOTAL_BOOKINGS'],
+                                                'total_usage' => (int)$row['TOTAL_USAGE'],
+                                                'total_no_show' => (int)$row['TOTAL_NO_SHOW']
+                                            ];
                                         }
                                     } else {
                                         echo "<tr><td colspan='5'>ไม่มีข้อมูลสำหรับเดือนและห้องที่เลือก</td></tr>";
@@ -129,6 +148,11 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                             </table>
                         </div>
                     </div>
+
+                    <!-- แท็บแสดงกราฟ -->
+                    <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
+                        <canvas id="meetingChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -136,6 +160,8 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
 </section>
 
 <?php include('footer.php'); ?>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 $(document).ready(function() {
     $('#selected_building').change(function() {
@@ -182,5 +208,55 @@ $(document).ready(function() {
             });
         }
     });
+
+    // ข้อมูลสำหรับกราฟ
+    var chartData = <?php echo json_encode($chartData); ?>;
+
+    // สร้างกราฟ
+    var ctx = document.getElementById('meetingChart').getContext('2d');
+    var meetingChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: chartData.map(data => data.day),
+            datasets: [
+                {
+                    label: 'จำนวนที่ใช้งาน',
+                    data: chartData.map(data => data.total_usage),
+                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'จำนวนไม่มาใช้งาน',
+                    data: chartData.map(data => data.total_no_show),
+                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'วันที่'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'จำนวน'
+                    },
+                    beginAtZero: true,
+                    ticks: {
+                        stepSize: 1
+                    }
+                }
+            }
+        }
+    });
 });
 </script>
+
