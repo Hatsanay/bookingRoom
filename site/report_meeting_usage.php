@@ -86,7 +86,8 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                 <thead>
                                     <tr>
                                         <th>วันที่</th>
-                                        <th>จำนวนการจอง</th>
+                                        <th>จำนวนการจองทั้งหมด</th>
+                                        <th>จำนวนที่ยังไม่ใช้งาน</th>
                                         <th>จำนวนที่ใช้งาน</th>
                                         <th>จำนวนไม่มาใช้งาน</th>
                                     </tr>
@@ -98,8 +99,11 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                         SELECT
                                         TO_CHAR(RESERVELWILLDATE, 'DD-MM-YYYY') AS DAY, 
                                         COUNT(*) AS TOTAL_BOOKINGS,
-                                        SUM(CASE WHEN RESERVEL_BOOKINGSTATUSID = 'STA0000007' THEN 1 ELSE 0 END) AS TOTAL_USAGE,
-                                        SUM(CASE WHEN RESERVEL_BOOKINGSTATUSID = 'STA0000012' THEN 1 ELSE 0 END) AS TOTAL_NO_SHOW
+                                        SUM(CASE WHEN RESERVEL_BOOKINGSTATUSID = 'STA0000011' THEN 1 ELSE 0 END) AS TOTAL_USAGE,
+                                        SUM(CASE WHEN RESERVEL_BOOKINGSTATUSID = 'STA0000012' THEN 1 ELSE 0 END) AS TOTAL_NO_SHOW,
+                                        COUNT(*) - 
+                                        SUM(CASE WHEN RESERVEL_BOOKINGSTATUSID = 'STA0000011' THEN 1 ELSE 0 END) - 
+                                        SUM(CASE WHEN RESERVEL_BOOKINGSTATUSID = 'STA0000012' THEN 1 ELSE 0 END) AS TOTALNOTACC
                                         FROM RESERVEROOM
                                         WHERE 
                                             TO_CHAR(RESERVELWILLDATE, 'MM-YYYY') = :selected_month
@@ -118,6 +122,7 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                             echo "<tr>";
                                             echo "<td>{$row['DAY']}</td>";
                                             echo "<td>{$row['TOTAL_BOOKINGS']}</td>";
+                                            echo "<td>{$row['TOTALNOTACC']}</td>";
                                             echo "<td>{$row['TOTAL_USAGE']}</td>";
                                             echo "<td>{$row['TOTAL_NO_SHOW']}</td>";
                                             echo "</tr>";
