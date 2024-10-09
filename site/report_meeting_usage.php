@@ -13,7 +13,6 @@ $selected_month = isset($_POST['selected_month']) ? date('m-Y', strtotime($_POST
 $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
 
 ?>
-
 <br>
 <section class="content">
     <div class="card card-primary">
@@ -63,10 +62,20 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>&nbsp;</label>
-                                <button type="submit" class="btn btn-primary form-control">ค้นหา</button>
+                                <button type="submit" class="btn btn-primary form-control">
+                                    <i class="fas fa-search" style="margin-right: 8px;"></i>ค้นหา
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="button" class="btn btn-success form-control" onclick="exportPDF()">
+                                    <i class="fas fa-file-pdf" style="margin-right: 8px;"></i>Export to PDF
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -74,10 +83,12 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
 
                 <ul class="nav nav-tabs" id="myTab" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="true">ตาราง</a>
+                        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table" role="tab"
+                            aria-controls="table" aria-selected="true">ตาราง</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">กราฟ</a>
+                        <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab"
+                            aria-controls="chart" aria-selected="false">กราฟ</a>
                     </li>
                 </ul>
 
@@ -159,6 +170,36 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+function exportPDF() {
+    const {
+        jsPDF
+    } = window.jspdf;
+    const element = document.querySelector('.datatable');
+
+    html2canvas(element).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        const imgWidth = 295; 
+        const pageHeight = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save('meeting_report.pdf');
+    });
+}
+
+
 $(document).ready(function() {
     $('#selected_building').change(function() {
         var building_id = $(this).val();
@@ -212,8 +253,7 @@ $(document).ready(function() {
         type: 'bar',
         data: {
             labels: chartData.map(data => data.day),
-            datasets: [
-                {
+            datasets: [{
                     label: 'จำนวนที่ใช้งาน',
                     data: chartData.map(data => data.total_usage),
                     backgroundColor: 'rgba(75, 192, 192, 0.5)',
@@ -253,4 +293,3 @@ $(document).ready(function() {
     });
 });
 </script>
-

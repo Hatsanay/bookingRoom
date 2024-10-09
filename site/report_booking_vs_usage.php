@@ -18,6 +18,8 @@ FROM
   RESERVEROOM ON EMPLOYEE.EMPID = RESERVEROOM.RESERVEL_EMPID
 GROUP BY 
   EMPLOYEE.EMPFNAME, EMPLOYEE.EMPLNAME
+HAVING 
+  COUNT(RESERVEROOM.RESERVEID) > 0
 ORDER BY 
   EMPLOYEE.EMPFNAME, EMPLOYEE.EMPLNAME";
 
@@ -34,7 +36,6 @@ while ($row = oci_fetch_assoc($result)) {
 
 oci_execute($result);
 ?>
-
 <br>
 <section class="content">
     <div class="card card-primary">
@@ -43,12 +44,21 @@ oci_execute($result);
         </div>
         <div class="card-body">
             <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 text-right">
+                        <button type="button" class="btn btn-success" onclick="exportPDF()">
+                            <i class="fas fa-file-pdf" style="margin-right: 8px;"></i>Export to PDF
+                        </button>
+                    </div>
+                </div>
                 <ul class="nav nav-tabs" id="reportTabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table" role="tab" aria-controls="table" aria-selected="true">ตาราง</a>
+                        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table" role="tab"
+                            aria-controls="table" aria-selected="true">ตาราง</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab" aria-controls="chart" aria-selected="false">กราฟ</a>
+                        <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart" role="tab"
+                            aria-controls="chart" aria-selected="false">กราฟ</a>
                     </li>
                 </ul>
                 <div class="tab-content" id="reportTabsContent">
@@ -100,6 +110,35 @@ oci_execute($result);
 <?php include('footer.php'); ?>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
+function exportPDF() {
+    const {
+        jsPDF
+    } = window.jspdf;
+    const element = document.querySelector('.datatable');
+
+    html2canvas(element).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        const imgWidth = 295;
+        const pageHeight = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save('reservation_report.pdf');
+    });
+}
+
 $(function() {
     $(".datatable").DataTable();
 

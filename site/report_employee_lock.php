@@ -72,7 +72,8 @@ if ($selected_department) {
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label for="selected_department">เลือกแผนก:</label>
-                                <select id="selected_department" name="selected_department" class="form-control" required>
+                                <select id="selected_department" name="selected_department" class="form-control"
+                                    required>
                                     <option value="">เลือกแผนก</option>
                                     <?php
                                     while ($row = oci_fetch_assoc($rs_department)) {
@@ -83,28 +84,39 @@ if ($selected_department) {
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-2">
                             <div class="form-group">
                                 <label>&nbsp;</label>
-                                <button type="submit" class="btn btn-primary form-control">ค้นหา</button>
+                                <button type="submit" class="btn btn-primary form-control">
+                                    <i class="fas fa-search" style="margin-right: 8px;"></i>ค้นหา
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label>&nbsp;</label>
+                                <button type="button" class="btn btn-success form-control" onclick="exportPDF()">
+                                <i class="fas fa-file-pdf" style="margin-right: 8px;"></i>Export to PDF
+                                </button>
                             </div>
                         </div>
                     </div>
                 </form>
 
                 <?php if ($selected_department): ?>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <h5>ยอดรวมการถูกล็อกสำหรับแผนก: 
-                                <strong><?php echo number_format($total_locks_for_department); ?> ครั้ง</strong>
-                            </h5>
-                        </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>ยอดรวมการถูกล็อกสำหรับแผนก:
+                            <strong><?php echo number_format($total_locks_for_department); ?> ครั้ง</strong>
+                        </h5>
                     </div>
+                </div>
                 <?php endif; ?>
 
                 <ul class="nav nav-tabs" role="tablist">
                     <li class="nav-item">
-                        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table-content" role="tab">ตาราง</a>
+                        <a class="nav-link active" id="table-tab" data-toggle="tab" href="#table-content"
+                            role="tab">ตาราง</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" id="chart-tab" data-toggle="tab" href="#chart-content" role="tab">กราฟ</a>
@@ -164,6 +176,36 @@ $(function() {
         "autoWidth": false,
     });
 });
+
+function exportPDF() {
+    const {
+        jsPDF
+    } = window.jspdf;
+    const element = document.querySelector('.datatable');
+
+    html2canvas(element).then((canvas) => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('l', 'mm', 'a4');
+        const imgWidth = 295;
+        const pageHeight = 210;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+        let heightLeft = imgHeight;
+        let position = 0;
+
+        pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft >= 0) {
+            position = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save('employee_lock_report.pdf');
+    });
+}
+
 
 $(document).ready(function() {
     var ctx = document.getElementById('lockChart').getContext('2d');
