@@ -139,7 +139,7 @@ $permistion = $_SESSION['userRoleaccess'];
           <?php if(substr($permistion,8,1)== "1"){?> <!-- bitที่5 -->
           <li class="nav-item">
             <a href="report.php" class="nav-link <?php if($active=="report"){echo "active";} ?> ">
-              <i class="nav-icon fa fa-users"></i>
+              <i class="nav-icon fas fa-file-pdf"></i>
               <p>รายงานทั้งหมด</p>
             </a>
           </li>

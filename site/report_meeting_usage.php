@@ -5,6 +5,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+if (substr($permistion, 8, 1) != "1") {
+    session_destroy();
+    header("Location: ../logout.php");
+    exit();
+}
+
 $query_building = "SELECT BUIID AS buiID, BUINAME AS buiname FROM BUILDING";
 $rs_building = oci_parse($condb, $query_building);
 oci_execute($rs_building);

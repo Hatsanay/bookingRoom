@@ -5,6 +5,12 @@ if (session_status() == PHP_SESSION_NONE) {
     session_start();
 }
 
+if (substr($permistion, 8, 1) != "1") {
+    session_destroy();
+    header("Location: ../logout.php");
+    exit();
+}
+
 $query_department = "SELECT DEPID, DEPNAME FROM DEPARTMENT";
 $rs_department = oci_parse($condb, $query_department);
 oci_execute($rs_department);
