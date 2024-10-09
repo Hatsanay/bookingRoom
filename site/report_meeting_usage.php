@@ -15,7 +15,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
 ?>
 
 <br>
-<!-- Main content -->
 <section class="content">
     <div class="card card-primary">
         <div class="card-header">
@@ -83,7 +82,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                 </ul>
 
                 <div class="tab-content" id="myTabContent">
-                    <!-- ตารางข้อมูล -->
                     <div class="tab-pane fade show active" id="table" role="tabpanel" aria-labelledby="table-tab">
                         <div class="card-body table-responsive p-0">
                             <table class="table table-bordered table-striped datatable">
@@ -98,7 +96,7 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                 </thead>
                                 <tbody>
                                     <?php
-                                    $chartData = []; // สำหรับจัดเก็บข้อมูลสำหรับกราฟ
+                                    $chartData = [];
                                     if ($selected_room) {
                                         $query = "
                                         SELECT
@@ -132,7 +130,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                                             echo "<td>{$row['TOTAL_NO_SHOW']}</td>";
                                             echo "</tr>";
 
-                                            // เก็บข้อมูลสำหรับกราฟ
                                             $chartData[] = [
                                                 'day' => $row['DAY'],
                                                 'total_bookings' => (int)$row['TOTAL_BOOKINGS'],
@@ -149,7 +146,6 @@ $selected_room = isset($_POST['selected_room']) ? $_POST['selected_room'] : '';
                         </div>
                     </div>
 
-                    <!-- แท็บแสดงกราฟ -->
                     <div class="tab-pane fade" id="chart" role="tabpanel" aria-labelledby="chart-tab">
                         <canvas id="meetingChart"></canvas>
                     </div>
@@ -209,10 +205,8 @@ $(document).ready(function() {
         }
     });
 
-    // ข้อมูลสำหรับกราฟ
     var chartData = <?php echo json_encode($chartData); ?>;
 
-    // สร้างกราฟ
     var ctx = document.getElementById('meetingChart').getContext('2d');
     var meetingChart = new Chart(ctx, {
         type: 'bar',
